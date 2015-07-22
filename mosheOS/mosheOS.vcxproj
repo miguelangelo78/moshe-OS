@@ -78,7 +78,6 @@
     <None Include="tools\os-tools\imdiskinst_2.0.0.exe" />
   </ItemGroup>
   <ItemGroup>
-    <Object Include="tools\build\out\loader.o" />
     <Object Include="tools\build\out\main.o" />
   </ItemGroup>
   <ItemGroup>

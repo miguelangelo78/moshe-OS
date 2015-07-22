@@ -35,7 +35,6 @@
     <None Include="moshe-boot\grub\menu.cfg" />
   </ItemGroup>
   <ItemGroup>
-    <Object Include="tools\build\out\loader.o" />
     <Object Include="tools\build\out\main.o" />
   </ItemGroup>
   <ItemGroup>
