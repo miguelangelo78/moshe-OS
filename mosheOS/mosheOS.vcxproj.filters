@@ -14,4 +14,33 @@
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="tools\build\moshe-set-grub.bat">
+      <Filter>Source Files</Filter>
+    </None>
+    <None Include="tools\build\build.bat">
+      <Filter>Source Files</Filter>
+    </None>
+    <None Include="tools\build\build.sh" />
+    <None Include="tools\build\buildall_and_run.bat">
+      <Filter>Source Files</Filter>
+    </None>
+    <None Include="tools\build\linker.ld" />
+    <None Include="tools\os-tools\imdiskinst_2.0.0.exe" />
+    <None Include="tools\os-tools\dd\dd.exe" />
+    <None Include="moshe-system\kernel\loader.asm">
+      <Filter>Source Files</Filter>
+    </None>
+    <None Include="moshe-boot\grub\grub_disk.img" />
+    <None Include="moshe-boot\grub\menu.cfg" />
+  </ItemGroup>
+  <ItemGroup>
+    <Object Include="tools\build\out\loader.o" />
+    <Object Include="tools\build\out\main.o" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="moshe-system\kernel\main.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
 </Project>
