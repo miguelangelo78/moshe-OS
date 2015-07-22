@@ -4,11 +4,27 @@
 # $2 = Build files (where the batch and shell files are, including the linker)
 # $3 = Root folder (where all folders are accessible)
 
+# SET VARIABLES:
+	# KERNEL AND KERNEL LOADER FILENAMES (also linker):
+		kernel_out_name=moshe-kernel
+		kernel_name=moshe-main
+		kernel_ldr_name=kernel_loader
+		linker_name=linker
+
+	# COMPILATION, ASSEMBLING AND LINKING
+		crosscompiler=i586-elf-gcc
+		crosslinker=i586-elf-ld
+		assembler=nasm
+		
+	# COMPILER, ASSEMBLER AND LINKER ARGUMENTS
+		crosscompiler_args='-Werror -Wall -O -fstrength-reduce -fomit-frame-pointer -nostdinc -fno-builtin -I"$1\kernel\include" -fno-strict-aliasing -fno-common -fno-stack-protector -c'
+		assembler_args="-f elf"
+	
 # COMPILE KERNEL:
-	i586-elf-gcc -Werror -Wall -O -fstrength-reduce -fomit-frame-pointer -nostdinc -fno-builtin -I"$1\kernel\include" -c -o "$3\bin\main.o" "$1\kernel\main.c" -fno-strict-aliasing -fno-common -fno-stack-protector;
+	$crosscompiler $crosscompiler_args "$1\kernel\\"$kernel_name".c" -o "$3\bin\\"$kernel_name".o";
 
 # ASSEMBLE KERNEL LOADER:
-	nasm -f elf "$1\kernel\loader.asm" -o "$3\bin\loader.o";
+	$assembler $assembler_args "$1\kernel\\"$kernel_ldr_name".asm" -o "$3\bin\\"$kernel_ldr_name".o";
 
 # LINK THE TWO TOGETHER:
-	i586-elf-ld -o "$2\moshe-kernel.bin" -T "$2\linker.ld" "$3\bin\main.o" "$3\bin\loader.o";
+	$crosslinker -o "$2\\"$kernel_out_name".bin" -T "$2\\"$linker_name".ld" "$3\bin\\"$kernel_name".o" "$3\bin\\"$kernel_ldr_name".o";

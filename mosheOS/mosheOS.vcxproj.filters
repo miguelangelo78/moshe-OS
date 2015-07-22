@@ -28,17 +28,17 @@
     <None Include="tools\build\linker.ld" />
     <None Include="tools\os-tools\imdiskinst_2.0.0.exe" />
     <None Include="tools\os-tools\dd\dd.exe" />
-    <None Include="moshe-system\kernel\loader.asm">
-      <Filter>Source Files</Filter>
-    </None>
     <None Include="moshe-boot\grub\grub_disk.img" />
     <None Include="moshe-boot\grub\menu.cfg" />
+    <None Include="moshe-system\kernel\kernel_loader.asm">
+      <Filter>Source Files</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Object Include="tools\build\out\main.o" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="moshe-system\kernel\main.c">
+    <ClCompile Include="moshe-system\kernel\moshe-main.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

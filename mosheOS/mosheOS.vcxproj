@@ -68,7 +68,7 @@
   <ItemGroup>
     <None Include="moshe-boot\grub\grub_disk.img" />
     <None Include="moshe-boot\grub\menu.cfg" />
-    <None Include="moshe-system\kernel\loader.asm" />
+    <None Include="moshe-system\kernel\kernel_loader.asm" />
     <None Include="tools\build\build.bat" />
     <None Include="tools\build\build.sh" />
     <None Include="tools\build\buildall_and_run.bat" />
@@ -81,7 +81,7 @@
     <Object Include="tools\build\out\main.o" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="moshe-system\kernel\main.c" />
+    <ClCompile Include="moshe-system\kernel\moshe-main.c" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
