@@ -17,7 +17,7 @@
 		assembler=nasm
 		
 	# COMPILER, ASSEMBLER AND LINKER ARGUMENTS
-		crosscompiler_args='-Werror -Wall -O -fstrength-reduce -fomit-frame-pointer -nostdinc -fno-builtin -I"$1\kernel\include" -fno-strict-aliasing -fno-common -fno-stack-protector -c'
+		crosscompiler_args='-Wall -O -fstrength-reduce -fomit-frame-pointer -nostdinc -fno-builtin -I"$1\kernel\include" -fno-strict-aliasing -fno-common -fno-stack-protector -c'
 		assembler_args="-f elf"
 	
 # COMPILE KERNEL:
