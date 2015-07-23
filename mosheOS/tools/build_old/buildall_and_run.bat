@@ -1,8 +1,0 @@
-:: BUILD KERNEL AND SEND IT TO THE FLOPPY:
-	call build.bat
-
-:: LET THE PROGRAMMER SEE THE OUTPUT, AND WAIT FOR HIM TO PRESS ENTER
-	PAUSE
-
-:: LAUNCH VIRTUALBOX
-	"C:\Program Files\Oracle\VirtualBox\VBoxManage.exe" startvm mosheOS

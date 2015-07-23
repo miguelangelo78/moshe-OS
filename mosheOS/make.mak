@@ -47,10 +47,6 @@ setgrub:
 	@cp "$(CURDIR)/bin/moshe-kernel.bin" /cygdrive/a/moshe-kernel.bin
 
 all: $(N_KERNEL_LDR).o $(SOURCES:.cpp=.cpp.o)
-	@printf "\n\n"
-	@echo $(SOURCES)
-	@printf "\n\n"
-	
 	cd $(P_BIN) && \
 		$(E_LD) -o $(N_KERNEL_OUT).$(F_BIN) $(N_KERNEL_LDR).$(F_OBJ) $(OBJECTS) 
 	

@@ -93,7 +93,15 @@
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
   </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='KernelDev|ARM'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>C:\Users\Miguel\Documents\Visual Studio 2015\Projects\mosheOS\mosheOS\moshe-system\libraries\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+  </ItemDefinitionGroup>
   <ItemGroup>
+    <None Include="make.bat" />
+    <None Include="make.mak" />
+    <None Include="make_sh.sh" />
     <None Include="moshe-boot\grub\grub_disk.img" />
     <None Include="moshe-boot\grub\menu.cfg" />
     <None Include="moshe-system\kernel\kernel_loader.asm" />
@@ -109,13 +117,22 @@
     <Object Include="tools\build\out\main.o" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="moshe-system\libraries\lib\bar.cpp" />
-    <ClCompile Include="moshe-system\libraries\include\bar.h" />
-    <ClCompile Include="moshe-system\libraries\lib\foo.cpp" />
     <ClCompile Include="moshe-system\kernel\moshe-main.cpp" />
+    <ClCompile Include="moshe-system\libraries\lib\conv\istr.cpp" />
+    <ClCompile Include="moshe-system\libraries\lib\debug\terminal.cpp" />
+    <ClCompile Include="moshe-system\libraries\lib\string\string.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="moshe-system\libraries\include\foo.h" />
+    <ClInclude Include="moshe-system\libraries\include\defs\video.h" />
+    <ClInclude Include="moshe-system\libraries\include\debug\terminal.h" />
+    <ClInclude Include="moshe-system\libraries\include\stdarg.h" />
+    <ClInclude Include="moshe-system\libraries\include\stdlib.h" />
+    <ClInclude Include="moshe-system\libraries\include\type\ctype.h" />
+    <ClInclude Include="moshe-system\libraries\include\type\null.h" />
+    <ClInclude Include="moshe-system\libraries\include\type\size_t.h" />
+    <ClInclude Include="moshe-system\libraries\include\string\string.h" />
+    <ClInclude Include="moshe-system\libraries\include\type\stdint.h" />
+    <ClInclude Include="moshe-system\libraries\include\va_list.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

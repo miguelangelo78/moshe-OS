@@ -33,6 +33,11 @@
     <None Include="moshe-system\kernel\kernel_loader.asm">
       <Filter>Source Files</Filter>
     </None>
+    <None Include="make.bat">
+      <Filter>Source Files</Filter>
+    </None>
+    <None Include="make.mak" />
+    <None Include="make_sh.sh" />
   </ItemGroup>
   <ItemGroup>
     <Object Include="tools\build\out\main.o" />
@@ -41,18 +46,45 @@
     <ClCompile Include="moshe-system\kernel\moshe-main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="moshe-system\libraries\include\bar.h">
+    <ClCompile Include="moshe-system\libraries\lib\string\string.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="moshe-system\libraries\lib\bar.cpp">
+    <ClCompile Include="moshe-system\libraries\lib\conv\istr.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="moshe-system\libraries\lib\foo.cpp">
+    <ClCompile Include="moshe-system\libraries\lib\debug\terminal.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="moshe-system\libraries\include\foo.h">
+    <ClInclude Include="moshe-system\libraries\include\string\string.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="moshe-system\libraries\include\type\size_t.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="moshe-system\libraries\include\type\null.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="moshe-system\libraries\include\type\ctype.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="moshe-system\libraries\include\va_list.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="moshe-system\libraries\include\stdarg.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="moshe-system\libraries\include\type\stdint.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="moshe-system\libraries\include\defs\video.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="moshe-system\libraries\include\stdlib.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="moshe-system\libraries\include\debug\terminal.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
