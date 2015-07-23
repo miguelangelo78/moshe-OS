@@ -1,18 +1,38 @@
-
-# SET VARIABLES:
-	#KERNEL LOADER, KERNEL AND OTHER CPP Files
-		KERNEL_OUT=moshe-kernel
-		KERNEL_MAIN=moshe-main
-		KERNEL_LDR=kernel_loader
+#PREFIXES:
+	# P = PATH
+	# N = VARIABLE/FILE NAME
+	# F = FILE FORMAT
+	# E = EXECUTABLE
+	# A = ARGUMENTS/FLAGS
 	
+# SET VARIABLES:
+	#OS-PATHS
+		P_ROOT=$(CURDIR)
+		P_SYSTEM=moshe-system
+		P_LIBS=$(P_SYSTEM)/libraries
+		P_KRNL=$(P_SYSTEM)/kernel
+		P_BIN=bin
+		
+	# FILE FORMATS
+		F_CC=cpp
+		F_ASM=asm
+		F_OBJ=o
+		F_BIN=bin
+	
+	#SOURCE FILES AND OTHER VARS:
+		SOURCES=$(wildcard $(P_SYSTEM)/**/*.$(F_CC))
+		OBJECTS=$(notdir $(SOURCES:.$(F_CC)=.$(F_CC).$(F_OBJ)))
+		N_KERNEL_OUT=moshe-kernel
+		N_KERNEL_LDR=kernel_loader
+			
 	# COMPILER, ASSEMBLER AND LINKER
-		CC=i586-elf-g++
-		LD=i586-elf-ld
-		ASM=nasm
+		E_CC=i586-elf-g++
+		E_LD=i586-elf-ld
+		E_ASM=nasm
 	
 	# COMPILER, ASSEMBLER AND LINKER ARGS
-		CFLAGS=-Wall -O -fstrength-reduce -fomit-frame-pointer -nostdinc -fno-builtin -I/libraries/include -fno-strict-aliasing -fno-common -fno-stack-protector -c
-		ASMFLAGS=-f elf
+		A_CFLAGS=-Wall -O -fstrength-reduce -fomit-frame-pointer -nostdinc -fno-builtin -Imoshe-system/libraries -fno-strict-aliasing -fno-common -fno-stack-protector -c
+		A_ASMFLAGS=-f elf
 clean:
 	rm *.o bin
 
@@ -26,17 +46,22 @@ setgrub:
 		./moshe-set-grub.bat
 	@cp "$(CURDIR)/bin/moshe-kernel.bin" /cygdrive/a/moshe-kernel.bin
 
-build: $(KERNEL_LDR).o $(KERNEL_MAIN).o foo.o
-	cd bin && \
-		$(LD) -o "$(CURDIR)/bin/$(KERNEL_OUT).bin" $(KERNEL_LDR).o $(KERNEL_MAIN).o foo.o 
 	
-$(KERNEL_LDR).o:
-	$(ASM) $(ASMFLAGS) -o "$(CURDIR)/bin/$(KERNEL_LDR).o" "$(CURDIR)/moshe-system/kernel/$(KERNEL_LDR).asm"
 	
-$(KERNEL_MAIN).o:
-	$(CC) $(CFLAGS) -o bin/$(KERNEL_MAIN).o moshe-system/kernel/$(KERNEL_MAIN).cpp
 	
-foo.o:	
-	$(CC) $(CFLAGS) -o "$(CURDIR)/bin/foo.o" "$(CURDIR)/moshe-system/kernel/foo.cpp"
+all: $(N_KERNEL_LDR).o $(SOURCES:.cpp=.cpp.o)
+	cd $(P_BIN) && \
+		$(E_LD) -o $(N_KERNEL_OUT).$(F_BIN) $(N_KERNEL_LDR).$(F_OBJ) $(OBJECTS) 
+	
+$(N_KERNEL_LDR).o:
+	$(E_ASM) $(A_ASMFLAGS) -o $(P_BIN)/$(N_KERNEL_LDR).$(F_OBJ) $(P_KRNL)/$(N_KERNEL_LDR).$(F_ASM)
 
+%.o:
+	$(E_CC) $(A_CFLAGS) -o $(P_BIN)/$(notdir $@) $(@:.o=)
+	
+	
+	
+	
+	
+	
 	

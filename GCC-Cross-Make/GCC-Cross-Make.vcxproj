@@ -43,9 +43,8 @@
     <NMakePreprocessorDefinitions>WIN32;_DEBUG;$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <NMakeBuildCommandLine>echo %~dp0%
-cd "C:\Users\Miguel\Documents\Visual Studio 2015\Projects\mosheOS\mosheOS\tools\build\"
-"buildall_and_run.bat"</NMakeBuildCommandLine>
+    <NMakeBuildCommandLine>cd "C:\Users\Miguel\Documents\Visual Studio 2015\Projects\mosheOS\mosheOS\"
+"make.bat"</NMakeBuildCommandLine>
     <NMakeOutput>GCC-Cross-Make.exe</NMakeOutput>
     <NMakePreprocessorDefinitions>WIN32;NDEBUG;$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
   </PropertyGroup>

@@ -41,12 +41,18 @@
     <ClCompile Include="moshe-system\kernel\moshe-main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="moshe-system\kernel\foo.cpp">
+    <ClCompile Include="moshe-system\libraries\bar.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="moshe-system\libraries\bar.h">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="moshe-system\libraries\foo.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="moshe-system\kernel\foo.h">
+    <ClInclude Include="moshe-system\libraries\foo.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

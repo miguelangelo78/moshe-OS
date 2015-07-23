@@ -109,11 +109,13 @@
     <Object Include="tools\build\out\main.o" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="moshe-system\kernel\foo.cpp" />
+    <ClCompile Include="moshe-system\libraries\bar.cpp" />
+    <ClCompile Include="moshe-system\libraries\bar.h" />
+    <ClCompile Include="moshe-system\libraries\foo.cpp" />
     <ClCompile Include="moshe-system\kernel\moshe-main.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="moshe-system\kernel\foo.h" />
+    <ClInclude Include="moshe-system\libraries\foo.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
