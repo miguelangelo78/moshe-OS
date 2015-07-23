@@ -1,7 +1,7 @@
 bits 32
 
-global loader
-extern kmain
+global _start
+extern _Z5kmainPv
 
 ; Multiboot header
 MODULEALIGN equ   1<<0
@@ -17,7 +17,7 @@ MultibootHeader:
       
 STACKSIZE   equ 0x4000        ; 16 KB
 
-loader:
+_start:
       cmp eax, 0x2BADB002     ; verify booted with grub
       jne .bad
       
@@ -29,7 +29,7 @@ loader:
       mov gs, ax
       
       push ebx
-      call kmain
+      call _Z5kmainPv
       
 .bad:
       cli

@@ -38,8 +38,16 @@
     <Object Include="tools\build\out\main.o" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="moshe-system\kernel\moshe-main.c">
+    <ClCompile Include="moshe-system\kernel\moshe-main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="moshe-system\kernel\foo.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="moshe-system\kernel\foo.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
