@@ -131,7 +131,7 @@
     <ClInclude Include="moshe-system\libraries\include\type\null.h" />
     <ClInclude Include="moshe-system\libraries\include\type\size_t.h" />
     <ClInclude Include="moshe-system\libraries\include\string\string.h" />
-    <ClInclude Include="moshe-system\libraries\include\type\stdint.h" />
+    <ClInclude Include="moshe-system\libraries\include\type\types.h" />
     <ClInclude Include="moshe-system\libraries\include\va_list.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

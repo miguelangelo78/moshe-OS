@@ -75,9 +75,6 @@
     <ClInclude Include="moshe-system\libraries\include\stdarg.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="moshe-system\libraries\include\type\stdint.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="moshe-system\libraries\include\defs\video.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -85,6 +82,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="moshe-system\libraries\include\debug\terminal.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="moshe-system\libraries\include\type\types.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

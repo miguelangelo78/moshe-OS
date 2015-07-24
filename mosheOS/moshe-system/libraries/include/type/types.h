@@ -33,6 +33,16 @@ typedef unsigned uintptr_t;
 typedef long long intmax_t;
 typedef unsigned long long uintmax_t;
 
+typedef char* string;
+
+typedef struct {
+	int32_t X, Y;
+} Point;
+
+typedef struct {
+	uint32_t X, Y;
+} UPoint;
+
 /* 7.18.2.1  Limits of exact-width integer types */
 #define INT8_MIN (-128) 
 #define INT16_MIN (-32768)

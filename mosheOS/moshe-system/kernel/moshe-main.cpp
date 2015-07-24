@@ -1,11 +1,13 @@
 #include "debug\terminal.h"
 #include "defs\video.h"
 
-char str[] = " banana";
-
 void kmain(void* MultibootStructure) {
-	d_clrscr(0x18);
-	d_gotoxy(VID_CENTER_W, VID_CENTER_H);
-	d_setcolor(0x17);
-	d_printf("Hello %d%s", 10, str);
+	d_clrscr();
+
+	d_gotoxy(0, 1);
+	unsigned int old = d_setcolor(get_color(VIDGreen, VIDBlack));
+	d_printf("Hello \n%s !", "World");
+	d_clrscr_rst(false);
+	d_setcolor(old);
+	d_printf("Here i Am %s", "again!");
 }
