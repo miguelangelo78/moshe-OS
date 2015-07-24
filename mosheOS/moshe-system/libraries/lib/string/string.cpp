@@ -5,3 +5,29 @@ size_t strlen(const char * str) {
 	while (str[len++]);
 	return len;
 }
+
+char *strcpy(char *s1, const char *s2) {
+	char *s1_old = s1;
+	while ((*(s1++) = *(s2++)));
+	return s1_old;
+}
+
+void* memcpy(void *dst, const void *src, size_t count) {
+	const char *sp = (const char*)src;
+	char *dp = (char *)dst;
+	for (; count != 0; count--) *dp++ = *sp++;
+	return dst;
+}
+
+void* memset(void *dst, char val, size_t count) {
+	unsigned char * tmp = (unsigned char *)dst;
+	for (; count != 0; count--, tmp[count] = val);
+	return dst;
+}
+
+unsigned short* memsetw(unsigned short *dst, unsigned short val, size_t count) {
+	unsigned short *tmp = (unsigned short *)dst;
+	for (; count != 0; count--)
+		*tmp++ = val;
+	return dst;
+}

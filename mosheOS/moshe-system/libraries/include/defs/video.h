@@ -6,8 +6,8 @@
 #define VID_HEIGHT 25
 
 #define VID_CENTER_W VID_WIDTH/2
-#define VID_CENTER_H VID_HEIGHT/2
-				
+#define VID_CENTER_H (VID_HEIGHT-1)/2
+	
 // DECLARE COLORS:
 enum VIDColor {
 	VIDBlack = 0x0,
@@ -30,3 +30,7 @@ enum VIDColor {
 
 extern uint8_t * vid_ptr;
 const uint8_t VIDCOLOR_DEFAULT = (VIDBlack << 4) | VIDLightGray;
+
+extern UPoint console_size;
+#define VID_SIZE_CALC() console_size.X * console_size.Y * 2
+#define VID_CALC_POS(x, y) (x + y * console_size.X)

@@ -49,10 +49,13 @@
     <ClCompile Include="moshe-system\libraries\lib\string\string.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="moshe-system\libraries\lib\conv\istr.cpp">
+    <ClCompile Include="moshe-system\libraries\lib\debug\terminal.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="moshe-system\libraries\lib\debug\terminal.cpp">
+    <ClCompile Include="moshe-system\libraries\lib\io\stdio.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="moshe-system\libraries\lib\conv\stri.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -85,6 +88,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="moshe-system\libraries\include\type\types.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="moshe-system\libraries\include\io\stdio.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

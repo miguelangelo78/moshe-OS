@@ -1,13 +1,14 @@
 #include "debug\terminal.h"
-#include "defs\video.h"
+#include "io\stdio.h"
 
 void kmain(void* MultibootStructure) {
 	d_clrscr();
-
-	d_gotoxy(0, 1);
-	unsigned int old = d_setcolor(get_color(VIDGreen, VIDBlack));
-	d_printf("Hello \n%s !", "World");
-	d_clrscr_rst(false);
-	d_setcolor(old);
-	d_printf("Here i Am %s", "again!");
+	char buff[] = "Kernel World";
+	d_gotoxy(VID_CENTER_W-strlen(buff)+1, VID_CENTER_H);
+	d_printf("Hello %s", buff);
+	d_putc(0x08);
+	d_putc(0x08);
+	d_putc(0x08);
+	d_putc(0x09);
+	d_putc('*'); d_putc('*'); d_putc('*');
 }
