@@ -38,6 +38,12 @@
     </None>
     <None Include="make.mak" />
     <None Include="make_sh.sh" />
+    <None Include="moshe-system\kernel\hal\gdt_idt.asm">
+      <Filter>Source Files</Filter>
+    </None>
+    <None Include="moshe-system\kernel\hal\interrupts.asm">
+      <Filter>Source Files</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Object Include="tools\build\out\main.o" />
@@ -56,6 +62,15 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="moshe-system\libraries\lib\conv\stri.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="moshe-system\libraries\lib\io\common.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="moshe-system\kernel\hal\descriptor_tables.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="moshe-system\kernel\hal\isr.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -91,6 +106,15 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="moshe-system\libraries\include\io\stdio.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="moshe-system\libraries\include\io\common.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="moshe-system\libraries\include\hal\descriptor_tables.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="moshe-system\libraries\include\hal\regs.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

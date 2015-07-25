@@ -1,14 +1,16 @@
 #include "debug\terminal.h"
-#include "io\stdio.h"
+#include "hal\descriptor_tables.h"
 
 void kmain(void* MultibootStructure) {
+	init_descriptor_tables();
+
 	d_clrscr();
-	char buff[] = "Kernel World";
-	d_gotoxy(VID_CENTER_W-strlen(buff)+1, VID_CENTER_H);
-	d_printf("Hello %s", buff);
-	d_putc(0x08);
-	d_putc(0x08);
-	d_putc(0x08);
-	d_putc(0x09);
-	d_putc('*'); d_putc('*'); d_putc('*');
+	d_gotoxy(VID_CENTER_W - 12, VID_CENTER_H);
+	d_printf("Hello %s\n", "Kernel World");
+
+	int i = 1 / 0;
+
+	d_setcolor(i);
+
+	d_printf("Nyess");
 }
