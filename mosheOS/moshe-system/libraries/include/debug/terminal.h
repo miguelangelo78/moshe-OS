@@ -20,4 +20,5 @@ extern uint8_t get_color(uint8_t back, uint8_t front);
 extern void d_scroll(bool force);
 extern void d_scroll(bool force, uint16_t amount);
 
+extern void d_printf_left_margin(int margin);
 extern UPoint d_getCursor();

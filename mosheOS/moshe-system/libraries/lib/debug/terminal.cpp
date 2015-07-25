@@ -14,6 +14,12 @@ UPoint console_cursor = { 0,0 };
 UPoint console_size = { VID_WIDTH, VID_HEIGHT };
 uint8_t * vid_ptr = (uint8_t*)VID_MEMORY;
 
+int printf_lmargin = 0; // In case the user wants to print without X returning to 0
+
+void d_printf_left_margin(int margin) {
+	printf_lmargin = margin;
+}
+
 static unsigned color = VIDCOLOR_DEFAULT; // Current color
 
 void d_cursor_goto(uint16_t x, uint16_t y) {
@@ -91,7 +97,7 @@ void d_putc(uint8_t c, uint8_t color) {
 			console_cursor.X = (console_cursor.X + 8) & ~(8 - 1);
 			break; 
 		case KEY_NEWLINE: // New line
-			console_cursor.X = 0;
+			console_cursor.X = printf_lmargin;
 			console_cursor.Y++;
 			break;
 		case KEY_CARRIAGE: // Carriage return

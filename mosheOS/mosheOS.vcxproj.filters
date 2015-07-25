@@ -85,10 +85,10 @@
     <ClCompile Include="moshe-system\kernel\hal\pic_pit\timer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="moshe-system\kernel\hal\pic_pit\sound.cpp">
+    <ClCompile Include="moshe-system\kernel\hal\pic_pit\keyboard.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="moshe-system\kernel\hal\pic_pit\keyboard.cpp">
+    <ClCompile Include="moshe-system\kernel\hal\pic_pit\speaker.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -153,10 +153,10 @@
     <ClInclude Include="moshe-system\libraries\include\hal\pic_pit\timer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="moshe-system\libraries\include\hal\pic_pit\sound.h">
+    <ClInclude Include="moshe-system\libraries\include\hal\pic_pit\keyboard.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="moshe-system\libraries\include\hal\pic_pit\keyboard.h">
+    <ClInclude Include="moshe-system\libraries\include\hal\pic_pit\speaker.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

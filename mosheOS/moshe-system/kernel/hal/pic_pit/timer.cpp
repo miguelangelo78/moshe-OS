@@ -4,9 +4,6 @@
 uint32_t tick = 0;
 
 static void timer_callback(registers_t regs) {
-	UPoint oldPoint = d_gotoxy(0, 0);
-	d_printf("Tick: %d\n", tick);
-	d_gotoxy(oldPoint.X, oldPoint.Y);
 	tick++;
 }
 

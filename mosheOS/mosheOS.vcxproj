@@ -126,7 +126,7 @@
     <ClCompile Include="moshe-system\kernel\hal\hal.cpp" />
     <ClCompile Include="moshe-system\kernel\hal\idt_gdt\isr.cpp" />
     <ClCompile Include="moshe-system\kernel\hal\pic_pit\keyboard.cpp" />
-    <ClCompile Include="moshe-system\kernel\hal\pic_pit\sound.cpp" />
+    <ClCompile Include="moshe-system\kernel\hal\pic_pit\speaker.cpp" />
     <ClCompile Include="moshe-system\kernel\moshe-main.cpp" />
     <ClCompile Include="moshe-system\kernel\hal\pic_pit\timer.cpp" />
     <ClCompile Include="moshe-system\libraries\lib\conv\stri.cpp" />
@@ -145,7 +145,7 @@
     <ClInclude Include="moshe-system\libraries\include\hal\hal.h" />
     <ClInclude Include="moshe-system\libraries\include\hal\isr.h" />
     <ClInclude Include="moshe-system\libraries\include\hal\pic_pit\keyboard.h" />
-    <ClInclude Include="moshe-system\libraries\include\hal\pic_pit\sound.h" />
+    <ClInclude Include="moshe-system\libraries\include\hal\pic_pit\speaker.h" />
     <ClInclude Include="moshe-system\libraries\include\hal\regs.h" />
     <ClInclude Include="moshe-system\libraries\include\stdarg.h" />
     <ClInclude Include="moshe-system\libraries\include\io\stdio.h" />

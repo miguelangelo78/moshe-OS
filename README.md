@@ -1,4 +1,6 @@
 # moshe-OS
+![Welcome Screen](http://i.imgur.com/gBzkYZl.png)
+
 My own custom Operating System. Tutorials: http://www.brokenthorn.com/Resources/OSDevIndex.html and http://wiki.osdev.org/Main_Page
 
 # Requirements
