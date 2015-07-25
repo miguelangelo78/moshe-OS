@@ -8,9 +8,6 @@ void kmain(void* MultibootStructure) {
 	d_gotoxy(VID_CENTER_W - 12, VID_CENTER_H);
 	d_printf("Hello %s\n", "Kernel World");
 
-	int i = 1 / 0;
-
-	d_setcolor(i);
-
+	
 	d_printf("Nyess");
 }
