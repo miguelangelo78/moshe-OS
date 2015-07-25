@@ -1,4 +1,5 @@
 #include <string/string.h>
+#include "type\types.h"
 
 size_t strlen(const char * str) {
 	size_t len = 0;
@@ -44,9 +45,9 @@ void* memcpy(void *dst, const void *src, size_t count) {
 }
 
 void* memset(void *dst, char val, size_t count) {
-	unsigned char * tmp = (unsigned char *)dst;
-	for (; count != 0; count--, tmp[count] = val);
-	return dst;
+	uint8_t *temp = (uint8_t *)dst;
+	for (; count != 0; count--) *temp++ = val;
+	return temp;
 }
 
 unsigned short* memsetw(unsigned short *dst, unsigned short val, size_t count) {

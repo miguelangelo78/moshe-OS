@@ -1,6 +1,6 @@
 #include "debug\terminal.h"
 #include "type\types.h"
-#include "io\common.h"
+#include "hal\hal.h"
 
 /*TEMPORARY KEYBOARD CONSTANTS*/
 #define KEY_BACKSPACE 0x08
@@ -25,14 +25,12 @@ void d_cursor_goto(uint16_t x, uint16_t y) {
 }
 
 void d_scroll(bool force, uint16_t amount) {
-	uint16_t blank = 0x20 | (((0 << 4) | (15 & 0x0F)) << 8);
-
 	// Scroll up
 	if (console_cursor.Y >= console_size.Y || force) {
-		for (uint32_t i = 0; i < (console_size.Y-1) * console_size.X; i++)
-			vid_ptr[i] = vid_ptr[i + console_size.X];
-		for (uint32_t i = (console_size.Y - 1) * console_size.X; i < console_size.X * console_size.Y; i++)
-			vid_ptr[i] = blank;
+		for (uint32_t i = 0; i <= 25 * 80 * 2; i++) {
+			vid_ptr[i] = vid_ptr[i + 80*2];
+			vid_ptr[i + 80 * 2] = vid_ptr[i*80 + 80 * 2];
+		}
 		console_cursor.Y = console_size.Y - 1;
 	}
 }
@@ -42,8 +40,8 @@ void d_scroll(bool up) {
 }
 
 void d_update_cursor() {
-	d_cursor_goto(console_cursor.X, console_cursor.Y);
 	d_scroll(false);
+	d_cursor_goto(console_cursor.X, console_cursor.Y);
 }
 
 void d_clrscr() {
@@ -77,8 +75,12 @@ void d_putc(uint8_t c, uint8_t color) {
 	if (c == 0) return;
 
 	switch (c) {
-		case KEY_BACKSPACE: {// Backspace
+		case KEY_BACKSPACE: { // Backspace
 			console_cursor.X--;
+			if (console_cursor.X < 0) {
+				console_cursor.X = 40;
+				console_cursor.Y--;
+			}
 			uint32_t loc = VID_CALC_POS(console_cursor.X, console_cursor.Y);
 
 			vid_ptr[loc * 2] = ' ';
@@ -189,15 +191,23 @@ unsigned d_setcolor(const unsigned c) {
 	return old;
 }
 
-void d_gotoxy(unsigned x, unsigned y) {
+UPoint d_gotoxy(unsigned x, unsigned y) {
+	UPoint oldPoint = { console_cursor.X, console_cursor.Y };
+	
 	if(x<=console_size.X)
 		console_cursor.X = x;
 	if(y<=console_size.Y)
 		console_cursor.Y = y;
-	
+
 	d_update_cursor();
+
+	return oldPoint;
 }
 
 uint8_t get_color(uint8_t back, uint8_t front) {
 	return (back << 4) | front;
+}
+
+UPoint d_getCursor() {
+	return console_cursor;
 }

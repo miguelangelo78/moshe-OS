@@ -14,8 +14,10 @@ extern void d_putc(uint8_t c);
 extern void d_puts(char* str);
 extern int d_printf(const char* str, ...);
 extern unsigned d_setcolor(const unsigned c);
-extern void d_gotoxy(unsigned x, unsigned y);
+extern UPoint d_gotoxy(unsigned x, unsigned y);
 extern uint8_t get_color(uint8_t back, uint8_t front);
 
 extern void d_scroll(bool force);
 extern void d_scroll(bool force, uint16_t amount);
+
+extern UPoint d_getCursor();

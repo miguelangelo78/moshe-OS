@@ -38,10 +38,10 @@
     </None>
     <None Include="make.mak" />
     <None Include="make_sh.sh" />
-    <None Include="moshe-system\kernel\hal\gdt_idt.asm">
+    <None Include="moshe-system\kernel\hal\idt_gdt\gdt_idt.asm">
       <Filter>Source Files</Filter>
     </None>
-    <None Include="moshe-system\kernel\hal\interrupts.asm">
+    <None Include="moshe-system\kernel\hal\idt_gdt\interrupts.asm">
       <Filter>Source Files</Filter>
     </None>
   </ItemGroup>
@@ -64,13 +64,31 @@
     <ClCompile Include="moshe-system\libraries\lib\conv\stri.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="moshe-system\libraries\lib\io\common.cpp">
+    <ClCompile Include="moshe-system\kernel\hal\hal.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="moshe-system\kernel\hal\descriptor_tables.cpp">
+    <ClCompile Include="moshe-system\kernel\hal\cpu.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="moshe-system\kernel\hal\isr.cpp">
+    <ClCompile Include="moshe-system\kernel\hal\idt_gdt\descriptor_tables.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="moshe-system\kernel\hal\idt_gdt\isr.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="moshe-system\kernel\error\panic.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="moshe-system\kernel\error\exception.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="moshe-system\kernel\hal\pic_pit\timer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="moshe-system\kernel\hal\pic_pit\sound.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="moshe-system\kernel\hal\pic_pit\keyboard.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -108,13 +126,37 @@
     <ClInclude Include="moshe-system\libraries\include\io\stdio.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="moshe-system\libraries\include\io\common.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="moshe-system\libraries\include\hal\descriptor_tables.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="moshe-system\libraries\include\hal\regs.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="moshe-system\libraries\include\hal\isr.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="moshe-system\libraries\include\hal\hal.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="moshe-system\libraries\include\hal\cpu.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="moshe-system\libraries\include\error\panic.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="moshe-system\libraries\include\error\exception.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="moshe-system\libraries\include\error\exception_data.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="moshe-system\libraries\include\hal\pic_pit\timer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="moshe-system\libraries\include\hal\pic_pit\sound.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="moshe-system\libraries\include\hal\pic_pit\keyboard.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

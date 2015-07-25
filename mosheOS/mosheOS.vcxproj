@@ -104,8 +104,8 @@
     <None Include="make_sh.sh" />
     <None Include="moshe-boot\grub\grub_disk.img" />
     <None Include="moshe-boot\grub\menu.cfg" />
-    <None Include="moshe-system\kernel\hal\gdt_idt.asm" />
-    <None Include="moshe-system\kernel\hal\interrupts.asm" />
+    <None Include="moshe-system\kernel\hal\idt_gdt\gdt_idt.asm" />
+    <None Include="moshe-system\kernel\hal\idt_gdt\interrupts.asm" />
     <None Include="moshe-system\kernel\kernel_loader.asm" />
     <None Include="tools\build\build.bat" />
     <None Include="tools\build\build.sh" />
@@ -119,24 +119,38 @@
     <Object Include="tools\build\out\main.o" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="moshe-system\kernel\hal\descriptor_tables.cpp" />
-    <ClCompile Include="moshe-system\kernel\hal\isr.cpp" />
+    <ClCompile Include="moshe-system\kernel\error\exception.cpp" />
+    <ClCompile Include="moshe-system\kernel\error\panic.cpp" />
+    <ClCompile Include="moshe-system\kernel\hal\cpu.cpp" />
+    <ClCompile Include="moshe-system\kernel\hal\idt_gdt\descriptor_tables.cpp" />
+    <ClCompile Include="moshe-system\kernel\hal\hal.cpp" />
+    <ClCompile Include="moshe-system\kernel\hal\idt_gdt\isr.cpp" />
+    <ClCompile Include="moshe-system\kernel\hal\pic_pit\keyboard.cpp" />
+    <ClCompile Include="moshe-system\kernel\hal\pic_pit\sound.cpp" />
     <ClCompile Include="moshe-system\kernel\moshe-main.cpp" />
+    <ClCompile Include="moshe-system\kernel\hal\pic_pit\timer.cpp" />
     <ClCompile Include="moshe-system\libraries\lib\conv\stri.cpp" />
     <ClCompile Include="moshe-system\libraries\lib\debug\terminal.cpp" />
-    <ClCompile Include="moshe-system\libraries\lib\io\common.cpp" />
     <ClCompile Include="moshe-system\libraries\lib\io\stdio.cpp" />
     <ClCompile Include="moshe-system\libraries\lib\string\string.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="moshe-system\libraries\include\defs\video.h" />
     <ClInclude Include="moshe-system\libraries\include\debug\terminal.h" />
+    <ClInclude Include="moshe-system\libraries\include\error\exception.h" />
+    <ClInclude Include="moshe-system\libraries\include\error\exception_data.h" />
+    <ClInclude Include="moshe-system\libraries\include\error\panic.h" />
+    <ClInclude Include="moshe-system\libraries\include\hal\cpu.h" />
     <ClInclude Include="moshe-system\libraries\include\hal\descriptor_tables.h" />
+    <ClInclude Include="moshe-system\libraries\include\hal\hal.h" />
+    <ClInclude Include="moshe-system\libraries\include\hal\isr.h" />
+    <ClInclude Include="moshe-system\libraries\include\hal\pic_pit\keyboard.h" />
+    <ClInclude Include="moshe-system\libraries\include\hal\pic_pit\sound.h" />
     <ClInclude Include="moshe-system\libraries\include\hal\regs.h" />
-    <ClInclude Include="moshe-system\libraries\include\io\common.h" />
     <ClInclude Include="moshe-system\libraries\include\stdarg.h" />
     <ClInclude Include="moshe-system\libraries\include\io\stdio.h" />
     <ClInclude Include="moshe-system\libraries\include\stdlib.h" />
+    <ClInclude Include="moshe-system\libraries\include\hal\pic_pit\timer.h" />
     <ClInclude Include="moshe-system\libraries\include\type\ctype.h" />
     <ClInclude Include="moshe-system\libraries\include\type\null.h" />
     <ClInclude Include="moshe-system\libraries\include\type\size_t.h" />
