@@ -99,6 +99,7 @@
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <None Include="link.ld" />
     <None Include="make.bat" />
     <None Include="make.mak" />
     <None Include="make_sh.sh" />
@@ -127,14 +128,18 @@
     <ClCompile Include="moshe-system\kernel\hal\idt_gdt\isr.cpp" />
     <ClCompile Include="moshe-system\kernel\hal\pic_pit\keyboard.cpp" />
     <ClCompile Include="moshe-system\kernel\hal\pic_pit\speaker.cpp" />
+    <ClCompile Include="moshe-system\kernel\memory\paging\kheap.cpp" />
+    <ClCompile Include="moshe-system\kernel\memory\paging\paging.cpp" />
     <ClCompile Include="moshe-system\kernel\moshe-main.cpp" />
     <ClCompile Include="moshe-system\kernel\hal\pic_pit\timer.cpp" />
+    <ClCompile Include="moshe-system\kernel\system\system.cpp" />
     <ClCompile Include="moshe-system\libraries\lib\conv\stri.cpp" />
     <ClCompile Include="moshe-system\libraries\lib\debug\terminal.cpp" />
     <ClCompile Include="moshe-system\libraries\lib\io\stdio.cpp" />
     <ClCompile Include="moshe-system\libraries\lib\string\string.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="moshe-system\kernel\system\system.h" />
     <ClInclude Include="moshe-system\libraries\include\defs\video.h" />
     <ClInclude Include="moshe-system\libraries\include\debug\terminal.h" />
     <ClInclude Include="moshe-system\libraries\include\error\exception.h" />
@@ -147,6 +152,8 @@
     <ClInclude Include="moshe-system\libraries\include\hal\pic_pit\keyboard.h" />
     <ClInclude Include="moshe-system\libraries\include\hal\pic_pit\speaker.h" />
     <ClInclude Include="moshe-system\libraries\include\hal\regs.h" />
+    <ClInclude Include="moshe-system\libraries\include\memory\paging\kheap.h" />
+    <ClInclude Include="moshe-system\libraries\include\memory\paging\paging.h" />
     <ClInclude Include="moshe-system\libraries\include\stdarg.h" />
     <ClInclude Include="moshe-system\libraries\include\io\stdio.h" />
     <ClInclude Include="moshe-system\libraries\include\stdlib.h" />

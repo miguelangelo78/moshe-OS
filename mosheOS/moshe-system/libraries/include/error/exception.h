@@ -5,3 +5,4 @@
 #include "hal\hal.h"
 
 extern void handle_Exception(registers_t regs, uint32_t code);
+extern void page_fault(registers_t regs);

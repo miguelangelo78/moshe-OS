@@ -14,7 +14,7 @@ void isr_handler(registers_t regs) {
 	handle_Exception(regs, code);
 
 	// Call IRQ in case it was registered
-	if (interrupt_handlers[code] != 0) interrupt_handlers[code](regs);
+	isr_run_handler(code, regs); // This will only run if the 'code' IRQ was installed
 }
 
 // INTERRUPT REQUESTS:
@@ -22,8 +22,8 @@ void isr_handler(registers_t regs) {
 void irq_handler(registers_t regs) {
 	uint32_t code = regs.int_no;
 	
-	if (interrupt_handlers[code] != 0)
-		interrupt_handlers[code](regs); // Grab callback and run it
+	// This will only run if the 'code' IRQ was installed
+	isr_run_handler(code, regs); 
 	
 	// INTERRUPT DONE
 	interrupt_done(code);
@@ -47,4 +47,16 @@ void install_interrupt_handler(uint8_t n, isr_t handler) {
 void uninstall_interrupt_handler(uint8_t n) {
 	if (n >= 0 && n < 256)
 		interrupt_handlers[n] = 0;
+}
+
+bool isr_is_installed(uint8_t isr_code) {
+	return interrupt_handlers[isr_code] != 0;
+}
+
+bool isr_run_handler(uint8_t handler_code, registers_t regs) {
+	if (isr_is_installed(handler_code)) {
+		interrupt_handlers[handler_code](regs); // Grab callback and run it
+		return true;
+	}
+	else return false;
 }

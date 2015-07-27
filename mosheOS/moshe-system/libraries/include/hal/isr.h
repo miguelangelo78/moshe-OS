@@ -5,6 +5,8 @@
 
 extern void install_interrupt_handler(uint8_t n, isr_t handler);
 extern void uninstall_interrupt_handler(uint8_t n);
+extern bool isr_is_installed(uint8_t isr_code);
+extern bool isr_run_handler(uint8_t handler_code, registers_t regs);
 extern isr_t interrupt_handlers[256];
 
 #define PIC_IRQ_TIMER 32

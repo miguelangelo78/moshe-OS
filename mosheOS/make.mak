@@ -50,7 +50,7 @@ setgrub:
 
 all: $(ASMSRC:.$(F_ASM)=.$(F_ASM).o) $(SOURCES:.$(F_CC)=.$(F_CC).o)
 	cd $(P_BIN) && \
-		$(E_LD) -o $(N_KERNEL_OUT).$(F_BIN) $(ASMOBJS) $(OBJECTS) 
+		$(E_LD) -T "$(CURDIR)/link.ld" -o $(N_KERNEL_OUT).$(F_BIN) $(ASMOBJS) $(OBJECTS) 
 
 %.$(F_ASM).o:
 	$(E_ASM) $(A_ASMFLAGS) -o $(P_BIN)/$(notdir $(@:.$(F_ASM).o=.o)) $(@:.o=)

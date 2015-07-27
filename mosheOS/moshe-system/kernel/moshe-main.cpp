@@ -1,5 +1,4 @@
-#include "debug\terminal.h"
-#include "hal\hal.h"
+#include "system\system.h"
 
 const char OS_NAME[] = "Moshe Operating System";
 const char OS_VER[] = "0.1";
@@ -19,10 +18,10 @@ void welcome_terminal() {
 	// Print top screen:
 	d_setcolor(get_color(VIDLightRed, VIDWhite));
 	d_clrscr();
-	d_printf_left_margin(10);
+	d_term_lmargin(10);
 	d_gotoxy(10, 0);
 	d_printf(welcome_msg, OS_NAME, OS_VER);
-	d_printf_left_margin(0);
+	d_term_lmargin(0);
 	d_printf("\n");
 
 	// Print bottom screen:
@@ -38,10 +37,10 @@ void welcome_terminal() {
 }
 
 void kmain(void* MultibootStructure) {
-	hal_initialize();
+	system_initialize();
 
 	welcome_terminal();
 
-	hal_shutdown();
+	system_shutdown();
 }
 

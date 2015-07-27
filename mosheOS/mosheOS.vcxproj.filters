@@ -44,6 +44,7 @@
     <None Include="moshe-system\kernel\hal\idt_gdt\interrupts.asm">
       <Filter>Source Files</Filter>
     </None>
+    <None Include="link.ld" />
   </ItemGroup>
   <ItemGroup>
     <Object Include="tools\build\out\main.o" />
@@ -89,6 +90,15 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="moshe-system\kernel\hal\pic_pit\speaker.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="moshe-system\kernel\memory\paging\paging.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="moshe-system\kernel\memory\paging\kheap.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="moshe-system\kernel\system\system.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -157,6 +167,15 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="moshe-system\libraries\include\hal\pic_pit\speaker.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="moshe-system\libraries\include\memory\paging\paging.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="moshe-system\libraries\include\memory\paging\kheap.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="moshe-system\kernel\system\system.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
