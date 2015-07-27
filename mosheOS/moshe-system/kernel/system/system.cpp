@@ -11,6 +11,10 @@ void system_initialize(multiboot_header_t* multiboot_ptr) {
 
 	// Initialize ramdisk and file system!
 	fs_root = initialize_initrd(initrd_loc);
+
+	// Load modules from the ram disk through the variable 'fs_root'
+
+	// then, after everything is loaded and configured, set fs_root to the real file system on the floppy and/or hard disk
 }
 
 void system_shutdown() {

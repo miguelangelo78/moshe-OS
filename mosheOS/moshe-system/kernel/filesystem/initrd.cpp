@@ -48,9 +48,6 @@ static fs_node_t *initrd_finddir(fs_node_t *node, char *name) {
 	return 0;
 }
 
-#include "debug\terminal.h"
-#include "boot\multiboot.h"
-
 fs_node_t* initialize_initrd(uint32_t location) {
 	// Initialise the main and file header pointers and populate the root directory.
 	initrd_header = (initrd_header_t *)location;
@@ -109,4 +106,26 @@ fs_node_t* initialize_initrd(uint32_t location) {
 		root_nodes[i].impl = 0;
 	}
 	return initrd_root;
+}
+
+#include "debug\terminal.h"
+
+void dump_ramdisk() {
+	d_printf("\n Dumping RAMDISK . . .\n\tcontents of /:\n");
+
+	struct dirent * node = 0;
+
+	for (int i = 0; (node = readdir_fs(fs_root, i)) != 0; i++) {
+
+		d_printf("\tNode: %s", node->name);
+		fs_node_t * fsnode = finddir_fs(fs_root, node->name);
+
+		if ((fsnode->flags & 0x7) == FS_DIRECTORY)
+			d_printf("\n\t\t(directory)\n");
+		else {
+			char buf[256];
+			read_fs(fsnode, 0, 256, (uint8_t*)buf);
+			d_printf("\n\t\t(file) contents: \"%s\"\n", buf);
+		}
+	}
 }

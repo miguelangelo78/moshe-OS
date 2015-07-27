@@ -15,3 +15,5 @@ typedef struct {
 
 // This function is self explanatory:
 fs_node_t* initialize_initrd(uint32_t location);
+
+extern void dump_ramdisk();
