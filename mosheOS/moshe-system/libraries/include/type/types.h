@@ -43,6 +43,8 @@ typedef struct {
 	uint32_t X, Y;
 } UPoint;
 
+#define NULL (void*)0
+
 /* 7.18.2.1  Limits of exact-width integer types */
 #define INT8_MIN (-128) 
 #define INT16_MIN (-32768)

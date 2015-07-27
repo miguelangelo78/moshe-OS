@@ -128,7 +128,7 @@
     <ClCompile Include="moshe-system\kernel\hal\idt_gdt\isr.cpp" />
     <ClCompile Include="moshe-system\kernel\hal\pic_pit\keyboard.cpp" />
     <ClCompile Include="moshe-system\kernel\hal\pic_pit\speaker.cpp" />
-    <ClCompile Include="moshe-system\kernel\memory\array\marray.cpp" />
+    <ClCompile Include="moshe-system\kernel\memory\heap\kheap_array.cpp" />
     <ClCompile Include="moshe-system\kernel\memory\heap\kheap.cpp" />
     <ClCompile Include="moshe-system\kernel\memory\heap\paging.cpp" />
     <ClCompile Include="moshe-system\kernel\moshe-main.cpp" />
@@ -153,7 +153,7 @@
     <ClInclude Include="moshe-system\libraries\include\hal\pic_pit\keyboard.h" />
     <ClInclude Include="moshe-system\libraries\include\hal\pic_pit\speaker.h" />
     <ClInclude Include="moshe-system\libraries\include\hal\regs.h" />
-    <ClInclude Include="moshe-system\libraries\include\memory\array\marray.h" />
+    <ClInclude Include="moshe-system\libraries\include\memory\heap\kheap_array.h" />
     <ClInclude Include="moshe-system\libraries\include\memory\heap\kheap.h" />
     <ClInclude Include="moshe-system\libraries\include\memory\heap\paging.h" />
     <ClInclude Include="moshe-system\libraries\include\stdarg.h" />

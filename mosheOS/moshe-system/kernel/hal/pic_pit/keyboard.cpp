@@ -50,10 +50,19 @@ static void keyboard_callback(registers_t regs) {
 	unsigned char scancode = inb(0x60);
 	if (scancode & 0x80) {
 		// Key Up
+	
 	}
 	else {
 		// Key Down
-		d_putc(kbdus[scancode]);
+		if (scancode == 75) { 
+		   // left
+			d_move_cursor(D_CUR_LEFT);
+		}
+		else if (scancode == 77) {
+			//right					  
+			d_move_cursor(D_CUR_RIGHT);
+		} else
+			d_putc(kbdus[scancode]);
 	}
 }
 

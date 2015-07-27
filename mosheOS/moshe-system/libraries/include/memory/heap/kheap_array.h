@@ -1,4 +1,4 @@
-// marray.h -- Interface for creating, inserting and deleting
+// kheap_array.h -- Interface for creating, inserting and deleting
 //                    from ordered arrays.
 //                    Written for JamesM's kernel development tutorials.
 #pragma once
@@ -15,8 +15,7 @@ A predicate should return nonzero if the first argument is less than the second.
 it should return zero.
 **/
 typedef char(*lessthan_predicate_t)(type_t, type_t);
-typedef struct
-{
+typedef struct {
 	type_t *array;
 	uint32_t size;
 	uint32_t max_size;

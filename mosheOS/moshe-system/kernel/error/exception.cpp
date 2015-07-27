@@ -1,4 +1,6 @@
 #include "error\exception.h"
+#include "string\string.h"
+#include "stdlib.h"
 
 void handle_Exception(registers_t regs, uint32_t code) {
 	// Run isr handler if it was installed, otherwise handle it right here in this function

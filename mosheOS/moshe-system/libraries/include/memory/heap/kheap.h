@@ -4,7 +4,7 @@
 //            Written for JamesM's kernel development tutorials.
 #pragma once
 #include "type\types.h"
-#include "memory\array\marray.h"
+#include "memory\heap\kheap_array.h"
 
 #define KHEAP_START         0xC0000000
 #define KHEAP_INITIAL_SIZE  0x100000
@@ -16,21 +16,18 @@
 /**
 Size information for a hole/block
 **/
-typedef struct
-{
+typedef struct {
 	uint32_t magic;   // Magic number, used for error checking and identification.
 	uint8_t is_hole;   // 1 if this is a hole. 0 if this is a block.
 	uint32_t size;    // size of the block, including the end footer.
 } header_t;
 
-typedef struct
-{
+typedef struct {
 	uint32_t magic;     // Magic number, same as in header_t.
 	header_t *header; // Pointer to the block header.
 } footer_t;
 
-typedef struct
-{
+typedef struct {
 	ordered_array_t index;
 	uint32_t start_address; // The start of our allocated space.
 	uint32_t end_address;   // The end of our allocated space. May be expanded up to max_address.
@@ -38,6 +35,9 @@ typedef struct
 	uint8_t supervisor;     // Should extra pages requested by us be mapped as supervisor-only?
 	uint8_t readonly;       // Should extra pages requested by us be mapped as read-only?
 } heap_t;
+
+extern uint32_t placement_address;
+extern heap_t *kheap;
 
 /**
 Create a new heap.

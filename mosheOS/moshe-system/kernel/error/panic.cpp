@@ -1,4 +1,5 @@
 #include "error\panic.h"
+#include "debug\terminal.h"
 
 void kernel_panic(uint32_t code) {
 	kernel_panic(code, (char*)""); // Unknown cause, call CSI for this one

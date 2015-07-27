@@ -1,6 +1,5 @@
 #pragma once
 #include "type\types.h"
-#include "debug\terminal.h"
 #include "error\exception_data.h"
 #include "hal\hal.h"
 

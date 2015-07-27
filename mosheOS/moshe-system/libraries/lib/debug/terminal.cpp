@@ -89,11 +89,13 @@ void d_putc(uint8_t c, uint8_t color) {
 
 	switch (c) {
 		case KEY_BACKSPACE: { // Backspace
-			console_cursor.X--;
-			if (console_cursor.X < 0) {
-				console_cursor.X = 40;
+			if(console_cursor.X >= 0)
+				console_cursor.X--;
+			else {
+				console_cursor.X = console_size.X;
 				console_cursor.Y--;
 			}
+
 			uint32_t loc = VID_CALC_POS(console_cursor.X, console_cursor.Y);
 
 			vid_ptr[loc * 2] = ' ';
@@ -123,10 +125,10 @@ void d_putc(uint8_t c, uint8_t color) {
 	}
 
 	// New line because it overflowed outside the window:
-	if (console_cursor.X >= term_rmargin) {
+	/*if (console_cursor.X >= term_rmargin) {
 		console_cursor.X = term_lmargin;
 		console_cursor.Y++;
-	}
+	} */
 	d_update_cursor();
 }
 
@@ -207,14 +209,29 @@ unsigned d_setcolor(const unsigned c) {
 UPoint d_gotoxy(unsigned x, unsigned y) {
 	UPoint oldPoint = { console_cursor.X, console_cursor.Y };
 	
-	if(x<=console_size.X)
+	if(x>=0)
 		console_cursor.X = x;
+	else {
+		console_cursor.X = console_size.X;
+		console_cursor.Y--;
+	}
+
 	if(y<=console_size.Y)
 		console_cursor.Y = y;
-
+	else {/*SCROLL*/}
 	d_update_cursor();
 
 	return oldPoint;
+}
+
+void d_move_cursor(int direction) {
+	switch (direction) {
+		case D_CUR_UP: console_cursor.Y--; break;
+		case D_CUR_DOWN: console_cursor.Y++;  break;
+		case D_CUR_LEFT: console_cursor.X--; break;
+		case D_CUR_RIGHT: console_cursor.X++;  break;
+	}
+	d_update_cursor();
 }
 
 uint8_t get_color(uint8_t back, uint8_t front) {

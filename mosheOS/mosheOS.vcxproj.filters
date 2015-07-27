@@ -95,13 +95,13 @@
     <ClCompile Include="moshe-system\kernel\system\system.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="moshe-system\kernel\memory\array\marray.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="moshe-system\kernel\memory\heap\kheap.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="moshe-system\kernel\memory\heap\paging.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="moshe-system\kernel\memory\heap\kheap_array.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -175,13 +175,13 @@
     <ClInclude Include="moshe-system\kernel\system\system.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="moshe-system\libraries\include\memory\array\marray.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="moshe-system\libraries\include\memory\heap\kheap.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="moshe-system\libraries\include\memory\heap\paging.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="moshe-system\libraries\include\memory\heap\kheap_array.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

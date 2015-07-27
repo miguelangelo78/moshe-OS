@@ -3,28 +3,26 @@
 #pragma once
 #include "type\types.h"
 #include "hal\regs.h"
+#include "error\exception.h"
 
-typedef struct page
-{
-	uint32_t present : 1;   // Page present in memory
-	uint32_t rw : 1;   // Read-only if clear, readwrite if set
-	uint32_t user : 1;   // Supervisor level only if clear
-	uint32_t accessed : 1;   // Has the page been accessed since last refresh?
-	uint32_t dirty : 1;   // Has the page been written to since last refresh?
-	uint32_t unused : 7;   // Amalgamation of unused and reserved bits
-	uint32_t frame : 20;  // Frame address (shifted right 12 bits)
+#define PAGE_SIZE 0x1000
+
+typedef struct page {
+	uint32_t present : 1; // Page present in memory
+	uint32_t rw : 1; // Read-only if clear, readwrite if set
+	uint32_t user : 1; // Supervisor level only if clear
+	uint32_t accessed : 1; // Has the page been accessed since last refresh?
+	uint32_t dirty : 1; // Has the page been written to since last refresh?
+	uint32_t unused : 7; // Amalgamation of unused and reserved bits
+	uint32_t frame : 20; // Frame address (shifted right 12 bits)
 } page_t;
 
-typedef struct page_table
-{
+typedef struct page_table {
 	page_t pages[1024];
 } page_table_t;
 
-typedef struct page_directory
-{
-	/**
-	Array of pointers to pagetables.
-	**/
+typedef struct page_directory {
+	/* Array of pointers to pagetables. */
 	page_table_t *tables[1024];
 	/**
 	Array of pointers to the pagetables above, but gives their *physical*
@@ -42,6 +40,7 @@ typedef struct page_directory
 
 void alloc_frame(page_t *page, int is_kernel, int is_writeable);
 void free_frame(page_t *page);
+uint32_t test_frame(uint32_t frame_addr);
 
 /**
 Sets up the environment, page directories etc and
@@ -61,9 +60,3 @@ If make == 1, if the page-table in which this page should
 reside isn't created, create it!
 **/
 page_t *get_page(uint32_t address, int make, page_directory_t *dir);
-
-/**
-Handler for page faults.
-**/
-void page_fault(registers_t regs);
-
