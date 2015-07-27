@@ -3,6 +3,7 @@
 #include "hal\cpu.h"
 #include "hal\pic_pit\timer.h"
 #include "hal\pic_pit\keyboard.h"
+#include "hal\pic_pit\speaker.h"
 
 #define PIT_FREQUENCY 1193180
 

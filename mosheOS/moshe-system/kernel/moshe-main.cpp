@@ -33,14 +33,27 @@ void welcome_terminal() {
 		d_putc(' ');
 
 	d_gotoxy(oldPoint.X + 1, oldPoint.Y + 1);
-	d_printf("Welcome to my Operating System!\n\n Your CPU vendor is: %s", get_cpu_vender());
+	d_printf("Welcome to my Operating System!\n\n Your CPU vendor is: %s\n", get_cpu_vender());
 }
-
+								
 void kmain(void* MultibootStructure) {
 	system_initialize();
 
 	welcome_terminal();
 
+	int * ptr = (int*) kmalloc(8);
+
+	*ptr = 100;
+
+	d_printf("0x%p:%d", ptr, *ptr);
+
+	kfree(ptr);
+
+	int * ptr2 = (int*)kmalloc(8);
+	*ptr = 70;
+
+	d_printf("\n0x%p:%d, 0x%p:%d", ptr, *ptr, ptr2, *ptr2);
+
+
 	system_shutdown();
 }
-

@@ -1,14 +1,8 @@
 // paging.h -- Defines the interface for and structures relating to paging.
 //             Written for JamesM's kernel development tutorials.
-
 #pragma once
-
 #include "type\types.h"
-#include "hal\isr.h"
-#include "error\exception.h"
-#include "string\string.h"
-
-#define PAGE_SIZE 0x1000
+#include "hal\regs.h"
 
 typedef struct page
 {
@@ -46,6 +40,9 @@ typedef struct page_directory
 	uint32_t physicalAddr;
 } page_directory_t;
 
+void alloc_frame(page_t *page, int is_kernel, int is_writeable);
+void free_frame(page_t *page);
+
 /**
 Sets up the environment, page directories etc and
 enables paging.
@@ -69,3 +66,4 @@ page_t *get_page(uint32_t address, int make, page_directory_t *dir);
 Handler for page faults.
 **/
 void page_fault(registers_t regs);
+
