@@ -33,7 +33,7 @@
 		E_ASM=nasm
 	
 	# COMPILER, ASSEMBLER AND LINKER ARGS/FLAGS
-		A_CFLAGS=-Wall -O -fstrength-reduce -fomit-frame-pointer -nostdinc -fno-builtin -I$(P_LIBS)/include -fno-strict-aliasing -fno-common -fno-stack-protector -c
+		A_CFLAGS=-Wno-unknown-pragmas -Wall -O -fstrength-reduce -fomit-frame-pointer -nostdinc -fno-builtin -I$(P_LIBS)/include -fno-strict-aliasing -fno-common -fno-stack-protector -c
 		A_ASMFLAGS=-f elf
 clean:
 	rm *.o bin
@@ -47,6 +47,7 @@ setgrub:
 	@cd "$(CURDIR)/moshe-boot" && \
 		./moshe-set-grub.bat
 	@cp "$(CURDIR)/bin/moshe-kernel.bin" /cygdrive/a/moshe-kernel.bin
+	@cp "$(CURDIR)/moshe-boot/grub/initrd.img" /cygdrive/a/initrd.img
 
 all: $(ASMSRC:.$(F_ASM)=.$(F_ASM).o) $(SOURCES:.$(F_CC)=.$(F_CC).o)
 	cd $(P_BIN) && \

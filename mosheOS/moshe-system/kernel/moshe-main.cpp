@@ -1,45 +1,26 @@
 #include "system\system.h"
 
-const char OS_NAME[] = "Moshe Operating System";
-const char OS_VER[] = "0.1";
-
-char welcome_msg[] =
-"_______________________________________________________\n"
-"    _   _                                 __       __  \n"
-"    /  /|               /               /   ))   /    )\n"
-"   /| / |    __   __   /__    __       /   //    \\     \n"
-"  / |/  |  /   ) (_ ` /   ) /___)     /   //      \\    \n"
-" /  /   | (___/ (__) /   / (___      (___//   (____/    \n"
-"_______________________________________________________\n\n"
-"           %s | Version: %s\n"
-"_______________________________________________________";
-
-void welcome_terminal() {
-	// Print top screen:
-	d_setcolor(get_color(VIDLightRed, VIDWhite));
-	d_clrscr();
-	d_term_lmargin(10);
-	d_gotoxy(10, 0);
-	d_printf(welcome_msg, OS_NAME, OS_VER);
-	d_term_lmargin(0);
-	d_printf("\n");
-
-	// Print bottom screen:
-	d_setcolor(get_color(VIDWhite, VIDBlack));
-
-	UPoint oldPoint = d_getCursor();
-
-	for (int i = 0; i < 14 * 80; i++)
-		d_putc(' ');
-
-	d_gotoxy(oldPoint.X + 1, oldPoint.Y + 1);
-	d_printf("Welcome to my Operating System!\n\n Your CPU vendor is: %s\n", get_cpu_vender());
-}
-		
 void kmain(void* MultibootStructure) {
-	system_initialize();
-
+	system_initialize((multiboot_header_t*)MultibootStructure);
+	
 	welcome_terminal();
+
+	d_printf("contents of / :\n");
+	int i = 0;
+	struct dirent * node = 0;
+	while ((node = readdir_fs(fs_root, i)) != 0) {
+		d_printf("Found file: %s", node->name);
+		fs_node_t * fsnode = finddir_fs(fs_root, node->name);
+
+		if ((fsnode->flags & 0x7) == FS_DIRECTORY)
+			d_printf("\n\t(directory)\n");
+		else {
+			char buf[256];
+			read_fs(fsnode, 0, 256, (uint8_t*)buf);
+			d_printf("\n\t contents: \"%s\"\n", buf);
+		}
+		i++;
+	}
 
 	system_shutdown();
 }

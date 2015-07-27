@@ -30,9 +30,6 @@
     <None Include="tools\os-tools\dd\dd.exe" />
     <None Include="moshe-boot\grub\grub_disk.img" />
     <None Include="moshe-boot\grub\menu.cfg" />
-    <None Include="moshe-system\kernel\kernel_loader.asm">
-      <Filter>Source Files</Filter>
-    </None>
     <None Include="make.bat">
       <Filter>Source Files</Filter>
     </None>
@@ -45,6 +42,9 @@
       <Filter>Source Files</Filter>
     </None>
     <None Include="link.ld" />
+    <None Include="moshe-system\kernel\boot\kernel_loader.asm">
+      <Filter>Source Files</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Object Include="tools\build\out\main.o" />
@@ -102,6 +102,15 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="moshe-system\kernel\memory\heap\kheap_array.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="moshe-system\kernel\boot\multiboot.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="moshe-system\kernel\filesystem\fs.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="moshe-system\kernel\filesystem\initrd.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -182,6 +191,15 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="moshe-system\libraries\include\memory\heap\kheap_array.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="moshe-system\libraries\include\boot\multiboot.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="moshe-system\kernel\filesystem\fs.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="moshe-system\kernel\filesystem\initrd.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
