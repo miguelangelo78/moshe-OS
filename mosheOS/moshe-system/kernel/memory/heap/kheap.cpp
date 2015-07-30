@@ -6,13 +6,17 @@
 #include "memory\heap\kheap.h"
 #include "memory\heap\paging.h"
 
-#include "debug\terminal.h"
-
 // end is defined in the linker script.
 extern uint32_t end;
 uint32_t placement_address = (uint32_t)&end;
 extern page_directory_t *kernel_directory;
 heap_t *kheap = 0;
+
+uint32_t initial_esp; // Start of the stack
+
+void heap_set_esp(uint32_t esp) {
+	initial_esp = esp;
+}
 
 void kfree(void *p) {
 	free(p, kheap);
@@ -136,7 +140,7 @@ heap_t *create_heap(uint32_t start, uint32_t end, uint32_t max, uint8_t supervis
 	return heap;
 }
 
-void *alloc(uint32_t size, uint32_t page_align, heap_t *heap) {
+void *alloc(uint32_t size, uint8_t page_align, heap_t *heap) {
 	// Make sure we take the size of header/footer into account.
 	uint32_t new_size = size + sizeof(header_t) + sizeof(footer_t);
 	// Find the smallest hole that will fit.
@@ -249,7 +253,7 @@ void *alloc(uint32_t size, uint32_t page_align, heap_t *heap) {
 
 uint32_t kmalloc_int(uint32_t sz, int align, uint32_t *phys) {
 	if (kheap != 0) {
-		void *addr = alloc(sz, (uint32_t)align, kheap);
+		void *addr = alloc(sz, align, kheap);
 		if (phys != 0) {
 			page_t *page = get_page((uint32_t)addr, 0, kernel_directory);
 			*phys = (page->frame * PAGE_SIZE) + ((uint32_t)addr & 0xFFF);
@@ -262,9 +266,9 @@ uint32_t kmalloc_int(uint32_t sz, int align, uint32_t *phys) {
 			placement_address += PAGE_SIZE;
 		}
 
-		if (phys) {
+		if (phys)
 			*phys = placement_address;
-		}
+
 		uint32_t tmp = placement_address;
 		placement_address += sz;
 		return tmp;

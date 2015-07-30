@@ -44,12 +44,12 @@ static uint32_t first_frame() {
 	uint32_t i, j;
 	for (i = 0; i < INDEX_FROM_BIT(nframes); i++)
 		if (frames[i] != 0xFFFFFFFF) // nothing free, exit early.
-			// at least one bit is free here.
-			for (j = 0; j < 32; j++) {
-				uint32_t toTest = 0x1 << j;
-				if (!(frames[i] & toTest))
-					return i * 4 * 8 + j;
-			}
+									 // at least one bit is free here.
+		for (j = 0; j < 32; j++) {
+			uint32_t toTest = 0x1 << j;
+			if (!(frames[i] & toTest))
+				return i * 4 * 8 + j;
+		}
 	return -1;
 }
 
@@ -58,7 +58,7 @@ void alloc_frame(page_t *page, int is_kernel, int is_writeable) {
 	if (page->frame != 0) return;
 	else {
 		uint32_t idx = first_frame();
-		if (idx == (uint32_t)-1){ /* PANIC! no free frames!! */ }
+		if (idx == (uint32_t)-1) { /* PANIC! no free frames!! */ }
 		set_frame(idx * PAGE_SIZE);
 		page->present = 1;
 		page->rw = (is_writeable) ? 1 : 0;

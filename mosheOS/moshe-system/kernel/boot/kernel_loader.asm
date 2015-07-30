@@ -1,7 +1,7 @@
 bits 32
 
 global _start
-extern _Z5kmainPv
+extern _Z5kmainP9multibootj
 
 ; Multiboot header
 MODULEALIGN equ   1<<0
@@ -15,7 +15,7 @@ MultibootHeader:
       dd FLAGS
       dd CHECKSUM
       
-STACKSIZE   equ 0x4000        ; 16 KB
+STACKSIZE   equ 0x8000        ; 16 KB
 
 _start:
       cmp eax, 0x2BADB002     ; verify booted with grub
@@ -28,8 +28,9 @@ _start:
       mov fs, ax
       mov gs, ax
       
-      push ebx
-      call _Z5kmainPv
+      push esp
+	  push ebx
+      call _Z5kmainP9multibootj
       
 .bad:
       cli
@@ -38,4 +39,3 @@ _start:
 align 4
 stack:
       TIMES STACKSIZE db 0
-      

@@ -1,20 +1,23 @@
 #include "system.h"
 
-void system_initialize(multiboot_header_t* multiboot_ptr) {
+void system_initialize(multiboot_header_t* multiboot_ptr, uint32_t stack_ptr) {
 	set_multiboot_header(multiboot_ptr);
+	heap_set_esp(stack_ptr);
+	
 	hal_initialize();
 	
 	uint32_t initrd_loc = mem_initrd_location();
 	placement_address = mem_initrd_location_end();
 	
 	initialize_paging();
-
+	
 	// Initialize ramdisk and file system!
 	fs_root = initialize_initrd(initrd_loc);
 
 	// Load modules from the ram disk through the variable 'fs_root'
 
 	// then, after everything is loaded and configured, set fs_root to the real file system on the floppy and/or hard disk
+	initialize_drivers();
 }
 
 void system_shutdown() {
@@ -26,7 +29,7 @@ void system_halt() {
 }
 
 const char OS_NAME[] = "Moshe Operating System";
-const char OS_VER[] = "0.1";
+const char OS_VER[] = "0.2";
 
 #pragma region WELCOME
 
@@ -43,7 +46,7 @@ char welcome_msg[] =
 
 void welcome_terminal() {
 	// Print top screen:
-	d_setcolor(get_color(VIDLightRed, VIDWhite));
+	d_setcolor(get_color(VIDGreen, VIDWhite));
 	d_clrscr();
 	d_term_lmargin(10);
 	d_gotoxy(10, 0);
@@ -52,7 +55,7 @@ void welcome_terminal() {
 	d_printf("\n");
 
 	// Print bottom screen:
-	d_setcolor(get_color(VIDWhite, VIDBlack));
+	d_setcolor(get_color(VIDBlack, VIDLightGray));
 
 	UPoint oldPoint = d_getCursor();
 

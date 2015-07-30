@@ -45,6 +45,12 @@
     <None Include="moshe-system\kernel\boot\kernel_loader.asm">
       <Filter>Source Files</Filter>
     </None>
+    <None Include="moshe-boot\moshe-set-grub.bat">
+      <Filter>Source Files</Filter>
+    </None>
+    <None Include="bin\moshe-kernel.bin">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Object Include="tools\build\out\main.o" />
@@ -111,6 +117,18 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="moshe-system\kernel\filesystem\initrd.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="moshe-system\kernel\drivers\storage\floppy\drvr_floppy.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="moshe-system\kernel\drivers\driver_man.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="moshe-system\kernel\task\thread.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="moshe-system\kernel\hal\dma.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -200,6 +218,18 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="moshe-system\kernel\filesystem\initrd.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="moshe-system\kernel\drivers\storage\floppy\drvr_floppy.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="moshe-system\kernel\drivers\driver_man.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="moshe-system\libraries\include\task\thread.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="moshe-system\libraries\include\hal\dma.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

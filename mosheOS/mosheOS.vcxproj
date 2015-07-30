@@ -99,12 +99,14 @@
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <None Include="bin\moshe-kernel.bin" />
     <None Include="link.ld" />
     <None Include="make.bat" />
     <None Include="make.mak" />
     <None Include="make_sh.sh" />
     <None Include="moshe-boot\grub\grub_disk.img" />
     <None Include="moshe-boot\grub\menu.cfg" />
+    <None Include="moshe-boot\moshe-set-grub.bat" />
     <None Include="moshe-system\kernel\hal\idt_gdt\gdt_idt.asm" />
     <None Include="moshe-system\kernel\hal\idt_gdt\interrupts.asm" />
     <None Include="moshe-system\kernel\boot\kernel_loader.asm" />
@@ -121,11 +123,14 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="moshe-system\kernel\boot\multiboot.cpp" />
+    <ClCompile Include="moshe-system\kernel\drivers\driver_man.cpp" />
+    <ClCompile Include="moshe-system\kernel\drivers\storage\floppy\drvr_floppy.cpp" />
     <ClCompile Include="moshe-system\kernel\error\exception.cpp" />
     <ClCompile Include="moshe-system\kernel\error\panic.cpp" />
     <ClCompile Include="moshe-system\kernel\filesystem\fs.cpp" />
     <ClCompile Include="moshe-system\kernel\filesystem\initrd.cpp" />
     <ClCompile Include="moshe-system\kernel\hal\cpu.cpp" />
+    <ClCompile Include="moshe-system\kernel\hal\dma.cpp" />
     <ClCompile Include="moshe-system\kernel\hal\idt_gdt\descriptor_tables.cpp" />
     <ClCompile Include="moshe-system\kernel\hal\hal.cpp" />
     <ClCompile Include="moshe-system\kernel\hal\idt_gdt\isr.cpp" />
@@ -137,12 +142,15 @@
     <ClCompile Include="moshe-system\kernel\moshe-main.cpp" />
     <ClCompile Include="moshe-system\kernel\hal\pic_pit\timer.cpp" />
     <ClCompile Include="moshe-system\kernel\system\system.cpp" />
+    <ClCompile Include="moshe-system\kernel\task\thread.cpp" />
     <ClCompile Include="moshe-system\libraries\lib\conv\stri.cpp" />
     <ClCompile Include="moshe-system\libraries\lib\debug\terminal.cpp" />
     <ClCompile Include="moshe-system\libraries\lib\io\stdio.cpp" />
     <ClCompile Include="moshe-system\libraries\lib\string\string.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="moshe-system\kernel\drivers\driver_man.h" />
+    <ClInclude Include="moshe-system\kernel\drivers\storage\floppy\drvr_floppy.h" />
     <ClInclude Include="moshe-system\kernel\filesystem\fs.h" />
     <ClInclude Include="moshe-system\kernel\filesystem\initrd.h" />
     <ClInclude Include="moshe-system\kernel\system\system.h" />
@@ -154,6 +162,7 @@
     <ClInclude Include="moshe-system\libraries\include\error\panic.h" />
     <ClInclude Include="moshe-system\libraries\include\hal\cpu.h" />
     <ClInclude Include="moshe-system\libraries\include\hal\descriptor_tables.h" />
+    <ClInclude Include="moshe-system\libraries\include\hal\dma.h" />
     <ClInclude Include="moshe-system\libraries\include\hal\hal.h" />
     <ClInclude Include="moshe-system\libraries\include\hal\isr.h" />
     <ClInclude Include="moshe-system\libraries\include\hal\pic_pit\keyboard.h" />
@@ -166,6 +175,7 @@
     <ClInclude Include="moshe-system\libraries\include\io\stdio.h" />
     <ClInclude Include="moshe-system\libraries\include\stdlib.h" />
     <ClInclude Include="moshe-system\libraries\include\hal\pic_pit\timer.h" />
+    <ClInclude Include="moshe-system\libraries\include\task\thread.h" />
     <ClInclude Include="moshe-system\libraries\include\type\ctype.h" />
     <ClInclude Include="moshe-system\libraries\include\type\null.h" />
     <ClInclude Include="moshe-system\libraries\include\type\size_t.h" />

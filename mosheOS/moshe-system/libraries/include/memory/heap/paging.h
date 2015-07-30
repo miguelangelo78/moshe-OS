@@ -38,10 +38,13 @@ typedef struct page_directory {
 	uint32_t physicalAddr;
 } page_directory_t;
 
+extern page_directory_t *kernel_directory;
+extern page_directory_t *current_directory;
+
 void alloc_frame(page_t *page, int is_kernel, int is_writeable);
 void free_frame(page_t *page);
 uint32_t test_frame(uint32_t frame_addr);
-
+																						
 /**
 Sets up the environment, page directories etc and
 enables paging.

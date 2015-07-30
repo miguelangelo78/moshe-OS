@@ -38,7 +38,9 @@ typedef struct {
 
 extern uint32_t placement_address;
 extern heap_t *kheap;
+extern uint32_t initial_esp; // Start of the stack
 
+extern void heap_set_esp(uint32_t esp);
 /**
 Create a new heap.
 **/

@@ -169,9 +169,9 @@ int d_printf(const char* str, ...) {
 					}
 					case 'd':
 					case 'i': {
-						int d = va_arg(args, int);
+						uint32_t d = va_arg(args, uint32_t);
 						char str[32] = { 0 };
-						itoa_s(d, 10, str);
+						itoa(d, 10, str);
 						d_puts(str);
 						i++;
 						break;

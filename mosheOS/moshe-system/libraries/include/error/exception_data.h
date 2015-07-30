@@ -20,7 +20,8 @@ enum EXCEPTION_LIST {
 	EXC_COERR,
 	EXC_ALIGNCHECK,
 	EXC_MACHCHECK,
-	EXC_RESEXC
+	EXC_RESEXC,
+	EXC_DMA_BADBUFF
 };
 
 const static char error_msgs[][33] = {
@@ -43,5 +44,6 @@ const static char error_msgs[][33] = {
 	{ "Coprocessor error" },
 	{ "Alignment check (486+ only)" },
 	{ "Machine check (pen/586+ only)" },
-	{ "Reserved exception" },
+	{ "Reserved exception" }, 
+	{ "DMA Error - Bad buffer" }
 };

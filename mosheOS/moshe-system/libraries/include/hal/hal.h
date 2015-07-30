@@ -1,6 +1,7 @@
 #pragma once
 #include "type\types.h"
 #include "hal\cpu.h"
+#include "hal\dma.h"
 #include "hal\pic_pit\timer.h"
 #include "hal\pic_pit\keyboard.h"
 #include "hal\pic_pit\speaker.h"
