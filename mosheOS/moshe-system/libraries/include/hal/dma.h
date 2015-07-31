@@ -3,7 +3,7 @@
 #include "type\types.h"
 
 #define DMA_MAX_CHANNELS 16
-#define DMA_CHANNELS_PER_DMAC DMA_MAX_CHANNELS/2
+#define DMA_CHANNELS_PER_DMAC 8
 
 enum DMA0_IO {
 	DMA0_STATUS_REG = 0x08,

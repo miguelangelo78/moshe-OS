@@ -4,20 +4,13 @@ void kmain(multiboot_header_t* MultibootStructure, uint32_t initial_stack) {
 	system_initialize(MultibootStructure, initial_stack);
 	
 	welcome_terminal();
+	//d_printf("Floppy drive: %s", dr_floppy_detect_drives());
 
-	uint8_t * sector = dr_floppy_read_sector(0);
+	char * buff = (char*)kmalloc(FLOPPY_FULLSIZE);
+	floppy_deep_read(buff);
 
-	if (sector != 0) {
-		int i = 0;
-		for (int c = 0; c < 4; c++) {
-			for (int j = 0; j < 128; j++)
-				d_printf("0x%x ", sector[i + j]);
-			i += 128;
-		}
-	}
-	else d_printf("Oops!");
-
-	//dump_ramdisk();
+	for (int i = 0; i < FLOPPY_CYLINDER_SIZE; i++)
+		d_printf("%c ", buff[i]);
 
 	system_shutdown();
 }

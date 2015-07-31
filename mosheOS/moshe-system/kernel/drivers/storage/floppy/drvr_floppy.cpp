@@ -1,448 +1,399 @@
-#include "drvr_floppy.h"
-#include "error\panic.h"
-#include "task\thread.h"
-
-volatile static uint32_t _FloppyDiskIRQ = 0;
-static uint8_t	_CurrentDrive = 0;
-const int FLPY_SECTORS_PER_TRACK = 18;
-const int FDC_DMA_CHANNEL = 2;
-uint32_t DMA_BUFFER = 0x1000;
-
-/********** DRIVER FUNCTIONS **********/
 //****************************************************************************
 //**
-//**    FLPY.cpp
+//**    drvr_floppy.cpp
 //**		-Floppy Disk driver
-//**
+//**   
+//**    SEE MORE: http://forum.osdev.org/viewtopic.php?t=13538
 //****************************************************************************
+
+#include "hal\hal.h"
+#include "drvr_floppy.h"
+#include "task\thread.h"
+#include "error\panic.h"
+#include "string\string.h"
+#include "memory\heap\kheap.h"
+						  
+const char * drive_types[8] = {
+	"none",
+	"360kB 5.25\"",
+	"1.2MB 5.25\"",
+	"720kB 3.5\"",
+
+	"1.44MB 3.5\"",
+	"2.88MB 3.5\"",
+	"unknown type",
+	"unknown type"
+};
+
+bool is_floppy_irq = false;
+uint8_t current_drive = 0;
+
 //============================================================================
-//    IMPLEMENTATION HEADERS
+//    FLOPPY ENUMS AND CONSTANTS
+//============================================================================
+char floppy_dmabuf[FLOPPY_DMA_BUFFER_SIZE] __attribute__((aligned(0x8000)));
+// standard base address of the primary floppy controller
+static const int floppy_base = 0x03f0;
+// standard IRQ number for floppy controllers
+static const int floppy_irq = 6;
+
+// The registers of interest. There are more, but we only use these here.
+enum floppy_registers {
+	FLOPPY_DOR = 2,  // digital output register
+	FLOPPY_MSR = 4,  // master status register, read only
+	FLOPPY_FIFO = 5,  // data FIFO, in DMA operation for commands
+	FLOPPY_CCR = 7   // configuration control register, write only
+};
+
+// The commands of interest. There are more, but we only use these here.
+enum floppy_commands {
+	CMD_SPECIFY = 3,            // SPECIFY
+	CMD_WRITE_DATA = 5,         // WRITE DATA
+	CMD_READ_DATA = 6,          // READ DATA
+	CMD_RECALIBRATE = 7,        // RECALIBRATE
+	CMD_SENSE_INTERRUPT = 8,    // SENSE INTERRUPT
+	CMD_SEEK = 15,              // SEEK
+};
+
+enum { floppy_motor_off = 0, floppy_motor_on, floppy_motor_wait };
+static volatile int floppy_motor_ticks = 0;
+static volatile int floppy_motor_state = 0;
+
+// Used by floppy_dma_init and floppy_do_track to specify direction
+typedef enum {
+	floppy_dir_read = 1,
+	floppy_dir_write = 2
+} floppy_dir;
+
+//============================================================================
+//    DRIVER FUNCTIONS
 //============================================================================
 
-//============================================================================
-//    IMPLEMENTATION PRIVATE DEFINITIONS / ENUMERATIONS / SIMPLE TYPEDEFS
-//============================================================================
+void irq_wait() {
+	while (!is_floppy_irq);
+	is_floppy_irq = false; 
+}
 
-/*
-**	Controller I/O Ports. Please see chapter for additional ports
-*/
-
-enum FLPY_IO {
-
-	FLPY_DOR = 0x3f2,
-	FLPY_MSR = 0x3f4,
-	FLPY_FIFO = 0x3f5,
-	FLPY_CTRL = 0x3f7
-};
-
-/**
-*	Bits 0-4 of command byte. Please see chapter for additional commands
-*/
-
-enum FLPY_CMD {
-
-	FDC_CMD_READ_TRACK = 2,
-	FDC_CMD_SPECIFY = 3,
-	FDC_CMD_CHECK_STAT = 4,
-	FDC_CMD_WRITE_SECT = 5,
-	FDC_CMD_READ_SECT = 6,
-	FDC_CMD_CALIBRATE = 7,
-	FDC_CMD_CHECK_INT = 8,
-	FDC_CMD_FORMAT_TRACK = 0xd,
-	FDC_CMD_SEEK = 0xf
-};
-
-/**
-*	Additional command masks. Can be masked with above commands
-*/
-
-enum FLPY_CMD_EXT {
-
-	FDC_CMD_EXT_SKIP = 0x20,	//00100000
-	FDC_CMD_EXT_DENSITY = 0x40,	//01000000
-	FDC_CMD_EXT_MULTITRACK = 0x80	//10000000
-};
-
-/*
-**	Digital Output Register
-*/
-
-enum FLPY_DOR_MASK {
-
-	FLPY_DOR_MASK_DRIVE0 = 0,	//00000000	= here for completeness sake
-	FLPY_DOR_MASK_DRIVE1 = 1,	//00000001
-	FLPY_DOR_MASK_DRIVE2 = 2,	//00000010
-	FLPY_DOR_MASK_DRIVE3 = 3,	//00000011
-	FLPY_DOR_MASK_RESET = 4,	//00000100
-	FLPY_DOR_MASK_DMA = 8,	//00001000
-	FLPY_DOR_MASK_DRIVE0_MOTOR = 16,	//00010000
-	FLPY_DOR_MASK_DRIVE1_MOTOR = 32,	//00100000
-	FLPY_DOR_MASK_DRIVE2_MOTOR = 64,	//01000000
-	FLPY_DOR_MASK_DRIVE3_MOTOR = 128	//10000000
-};
-
-/**
-*	Main Status Register
-*/
-
-enum FLPY_MSR_MASK {
-
-	FLPY_MSR_MASK_DRIVE1_POS_MODE = 1,	//00000001
-	FLPY_MSR_MASK_DRIVE2_POS_MODE = 2,	//00000010
-	FLPY_MSR_MASK_DRIVE3_POS_MODE = 4,	//00000100
-	FLPY_MSR_MASK_DRIVE4_POS_MODE = 8,	//00001000
-	FLPY_MSR_MASK_BUSY = 16,	//00010000
-	FLPY_MSR_MASK_DMA = 32,	//00100000
-	FLPY_MSR_MASK_DATAIO = 64, //01000000
-	FLPY_MSR_MASK_DATAREG = 128	//10000000
-};
-
-/**
-*	Controller Status Port 0
-*/
-
-enum FLPY_ST0_MASK {
-
-	FLPY_ST0_MASK_DRIVE0 = 0,		//00000000	=	for completness sake
-	FLPY_ST0_MASK_DRIVE1 = 1,		//00000001
-	FLPY_ST0_MASK_DRIVE2 = 2,		//00000010
-	FLPY_ST0_MASK_DRIVE3 = 3,		//00000011
-	FLPY_ST0_MASK_HEADACTIVE = 4,		//00000100
-	FLPY_ST0_MASK_NOTREADY = 8,		//00001000
-	FLPY_ST0_MASK_UNITCHECK = 16,		//00010000
-	FLPY_ST0_MASK_SEEKEND = 32,		//00100000
-	FLPY_ST0_MASK_INTCODE = 64		//11000000
-};
-
-/*
-** LPYDSK_ST0_MASK_INTCODE types
-*/
-
-enum FLPY_ST0_INTCODE_TYP {
-
-	FLPY_ST0_TYP_NORMAL = 0,
-	FLPY_ST0_TYP_ABNORMAL_ERR = 1,
-	FLPY_ST0_TYP_INVALID_ERR = 2,
-	FLPY_ST0_TYP_NOTREADY = 3
-};
-
-/**
-*	GAP 3 sizes
-*/
-
-enum FLPY_GAP3_LENGTH {
-
-	FLPY_GAP3_LENGTH_STD = 42,
-	FLPY_GAP3_LENGTH_5_14 = 32,
-	FLPY_GAP3_LENGTH_3_5 = 27
-};
-
-/*
-**	Formula: 2^sector_number * 128, where ^ denotes "to the power of"
-*/
-
-enum FLPY_SECTOR_DTL {
-
-	FLPY_SECTOR_DTL_128 = 0,
-	FLPY_SECTOR_DTL_256 = 1,
-	FLPY_SECTOR_DTL_512 = 2,
-	FLPY_SECTOR_DTL_1024 = 4
-};
-
-bool dma_initialize_floppy(uint8_t *buffer, unsigned length) {
+static void floppy_dma_init(floppy_dir dir) {
 	union {
-		uint8_t byte[4];
-		unsigned long l;
-	}a, c;
+		unsigned char b[4]; // 4 bytes
+		unsigned long l;    // 1 long = 32-bit
+	} a, c; // address and count
 
-	a.l = (unsigned)buffer;
-	c.l = (unsigned)length - 1;
+	a.l = (unsigned)&floppy_dmabuf;
+	c.l = (unsigned)FLOPPY_DMA_BUFFER_SIZE - 1; // -1 because of DMA counting
 
-	//Check for buffer issues
-	if ((a.l >> 24) || (c.l >> 16) || (((a.l & 0xffff) + c.l) >> 16)) return false;
+	// check that address is at most 24-bits (under 16MB)
+	// check that count is at most 16-bits (DMA limit)
+	// check that if we add count and address we don't get a carry
+	// (DMA can't deal with such a carry, this is the 64k boundary limit)
+	if ((a.l >> 24) || (c.l >> 16) || (((a.l & 0xffff) + c.l) >> 16))
+		kernel_panic(EXC_DRIVER, (char*)"floppy_dma_init: static buffer problem\n");
 
-	dma_reset(1);
-	dma_mask_channel(FDC_DMA_CHANNEL);
-	dma_reset_flipflop(1);
-
-	dma_set_address(FDC_DMA_CHANNEL, a.byte[0], a.byte[1]);
-	dma_reset_flipflop(1);
-
-	dma_set_count(FDC_DMA_CHANNEL, c.byte[0], c.byte[1]);
-	dma_set_read(FDC_DMA_CHANNEL);
-
-	dma_unmask_all(1);
-
-	return true;
-}
-
-void flpy_write_dor(uint8_t val) {
-	outb(FLPY_DOR, val);
-}
-
-uint8_t flpy_read_status() {
-	return inb(FLPY_MSR);
-}
-
-void flpy_send_command(uint8_t cmd) {
-	//! wait until data register is ready. We send commands to the data register
-	for (int i = 0; i < 500; i++)
-		if (flpy_read_status() & FLPY_MSR_MASK_DATAREG)
-			return outb(FLPY_FIFO, cmd);
-}
-
-uint8_t flpy_read_data() {
-	//! same as above function but returns data register for reading
-	for (int i = 0; i < 500; i++)
-		if (flpy_read_status() & FLPY_MSR_MASK_DATAREG)
-			return inb(FLPY_FIFO);
-	return 0;
-}
-
-void flpy_write_ccr(uint8_t val) {
-	//! write the configuation control
-	outb(FLPY_CTRL, val);
-}
-
-static void dr_floppy_callback(registers_t regs) {  
-	_FloppyDiskIRQ = 1;	// Interrupt has been triggered
-}
-
-inline void flpy_wait_irq() {
-	//! wait for irq to fire
-	while (!_FloppyDiskIRQ);
-	_FloppyDiskIRQ = 0;
-}
-
-/**
-*	Controller Command Routines
-*/
-
-//! check interrupt status command
-void flpy_check_int(uint32_t* st0, uint32_t* cyl) {
-
-	flpy_send_command(FDC_CMD_CHECK_INT);
-
-	*st0 = flpy_read_data();
-	*cyl = flpy_read_data();
-}
-
-//! turns the current floppy drives motor on/off
-void flpy_control_motor(bool b) {
-
-	//! sanity check: invalid drive
-	if (_CurrentDrive > 3) return;
-
-	uint32_t motor = 0;
-
-	//! select the correct mask based on current drive
-	switch (_CurrentDrive) {
-		case 0:
-			motor = FLPY_DOR_MASK_DRIVE0_MOTOR;
-			break;
-		case 1:
-			motor = FLPY_DOR_MASK_DRIVE1_MOTOR;
-			break;
-		case 2:
-			motor = FLPY_DOR_MASK_DRIVE2_MOTOR;
-			break;
-		case 3:
-			motor = FLPY_DOR_MASK_DRIVE3_MOTOR;
-			break;
+	unsigned char mode;
+	switch (dir) {
+		// 01:0:0:01:10 = single/inc/no-auto/to-mem/chan2
+		case floppy_dir_read:  mode = 0x46; break;
+		// 01:0:0:10:10 = single/inc/no-auto/from-mem/chan2
+		case floppy_dir_write: mode = 0x4a; break;
+		default: kernel_panic(EXC_DRIVER, (char*)"floppy_dma_init: invalid direction"); return;
 	}
 
-	//! turn on or off the motor of that drive
-	if (b)
-		flpy_write_dor(_CurrentDrive | motor | FLPY_DOR_MASK_RESET | FLPY_DOR_MASK_DMA);
-	else
-		flpy_write_dor(FLPY_DOR_MASK_RESET);
+	outb(0x0a, 0x06);   // mask chan 2
 
-	//! in all cases; wait a little bit for the motor to spin up/turn off
-	sleep(20);
+	outb(0x0c, 0xff);   // reset flip-flop
+	outb(0x04, a.b[0]); //  - address low byte
+	outb(0x04, a.b[1]); //  - address high byte
+
+	outb(0x81, a.b[2]); // external page register
+
+	outb(0x0c, 0xff);   // reset flip-flop
+	outb(0x05, c.b[0]); //  - count low byte
+	outb(0x05, c.b[1]); //  - count high byte
+
+	outb(0x0b, mode);   // set mode (see above)
+
+	outb(0x0a, 0x02);   // unmask chan 2
 }
 
-//! configure drive
-void flpy_drive_data(uint32_t stepr, uint32_t loadt, uint32_t unloadt, bool dma) {
-	uint32_t data = 0;
-
-	//! send command
-	flpy_send_command(FDC_CMD_SPECIFY);
-	data = ((stepr & 0xf) << 4) | (unloadt & 0xf);
-	flpy_send_command(data);
-	data = (loadt) << 1 | (dma == false) ? 0 : 1;
-	flpy_send_command(data);
+void floppy_write_cmd(int base, char cmd) {
+	for (int i = 0; i < 600; i++) {	// do timeout, 60 seconds
+		sleep(1); // sleep 10 ms
+		if (0x80 & inb(base + FLOPPY_MSR))
+			return (void)outb(base + FLOPPY_FIFO, cmd);
+	}
+	kernel_panic(EXC_DRIVER, (char*)"floppy_write_cmd: timeout");
 }
 
-//! calibrates the drive
-int flpy_calibrate(uint32_t drive) {
+unsigned char floppy_read_data(int base) {
+	for (int i = 0; i < 600; i++) {	// do timeout, 60 seconds
+		sleep(1); // sleep 10 ms
+		if (0x80 & inb(base + FLOPPY_MSR))
+			return inb(base + FLOPPY_FIFO);
+		
+	}
+	kernel_panic(EXC_DRIVER, (char*)"floppy_read_data: timeout");
+	return 0; // not reached
+}
 
-	uint32_t st0, cyl;
+void floppy_check_interrupt(int base, int *st0, int *cyl) {
+	floppy_write_cmd(base, CMD_SENSE_INTERRUPT);
 
-	if (drive >= 4)
-		return -2;
+	*st0 = floppy_read_data(base);
+	*cyl = floppy_read_data(base);
+}
 
-	//! turn on the motor
-	flpy_control_motor(true);
+void floppy_motor(int base, int onoff) {
+	if (onoff) {
+		if (!floppy_motor_state) {
+			// need to turn on
+			outb(base + FLOPPY_DOR, 0x1c);
+			sleep(50); // wait 500 ms = hopefully enough for modern drives
+		}
+		floppy_motor_state = floppy_motor_on;
+	} else {
+		if (floppy_motor_state == floppy_motor_wait)
+			kernel_panic(EXC_DRIVER, (char*)"floppy_motor: strange, fd motor-state already waiting..\n");
+		
+		floppy_motor_ticks = 300; // 3 seconds, see floppy_timer() below
+		floppy_motor_state = floppy_motor_wait;
+	}
+}
+
+void floppy_motor_kill(int base) {
+	outb(base + FLOPPY_DOR, 0x0c);
+	floppy_motor_state = floppy_motor_off;
+}
+
+// Move to cylinder 0, which calibrates the drive..
+void floppy_calibrate(int base) {
+	int st0, cyl = -1; // set to bogus cylinder
+
+	floppy_motor(base, floppy_motor_on);
 
 	for (int i = 0; i < 10; i++) {
+		// Attempt to positions head to cylinder 0
+		floppy_write_cmd(base, CMD_RECALIBRATE);
+		floppy_write_cmd(base, 0); // argument is drive, we only support 0
 
-		//! send command
-		flpy_send_command(FDC_CMD_CALIBRATE);
-		flpy_send_command(drive);
-		flpy_wait_irq();
-		flpy_check_int(&st0, &cyl);
+		irq_wait();
+		floppy_check_interrupt(base, &st0, &cyl);
 
-		//! did we fine cylinder 0? if so, we are done
-		if (!cyl) {
-			flpy_control_motor(false);
-			return 0;
+		if (st0 & 0xC0) {
+			static const char * status[] = { 0, "error", "invalid", "drive" };
+			char buff[50] = "floppy_calibrate: status = ";
+			strcat(buff, status[st0 >> 6]);
+			kernel_panic(EXC_DRIVER, buff);
+			continue;
+		}
+
+		if (!cyl) { // found cylinder 0 ?
+			floppy_motor(base, floppy_motor_off);
+			return;
 		}
 	}
 
-	flpy_control_motor(false);
-	return -1;
+	floppy_motor(base, floppy_motor_off);
+	kernel_panic(EXC_DRIVER, (char*)"floppy_calibrate: 10 retries exhausted\n");
 }
 
-//! disable controller
-void flpy_disable_controller() {
-	flpy_write_dor(0);
+void floppy_reset(int base) {
+
+	outb(base + FLOPPY_DOR, 0x00); // disable controller
+	outb(base + FLOPPY_DOR, 0x0C); // enable controller
+
+	irq_wait(); // sleep until interrupt occurs
+
+	int st0, cyl; // ignore these here..
+	floppy_check_interrupt(base, &st0, &cyl);
+
+	// set transfer speed 500kb/s
+	outb(base + FLOPPY_CCR, 0x00);
+
+	//  - 1st byte is: bits[7:4] = steprate, bits[3:0] = head unload time
+	//  - 2nd byte is: bits[7:1] = head load time, bit[0] = no-DMA
+	//
+	//  steprate    = (8.0ms - entry*0.5ms)*(1MB/s / xfer_rate)
+	//  head_unload = 8ms * entry * (1MB/s / xfer_rate), where entry 0 -> 16
+	//  head_load   = 1ms * entry * (1MB/s / xfer_rate), where entry 0 -> 128
+	//
+	floppy_write_cmd(base, CMD_SPECIFY);
+	floppy_write_cmd(base, 0xdf); /* steprate = 3ms, unload time = 240ms */
+	floppy_write_cmd(base, 0x02); /* load time = 16ms, no-DMA = 0 */
+
+	// it could fail...
+	floppy_calibrate(base);
 }
 
-//! enable controller
-void flpy_enable_controller() {
-	flpy_write_dor(FLPY_DOR_MASK_RESET | FLPY_DOR_MASK_DMA);
-}
+// Seek for a given cylinder, with a given head
+void floppy_seek(int base, unsigned cyli, int head) {
+	int st0, cyl = -1; // set to bogus cylinder
 
-//! reset controller
-void flpy_reset() {
-	uint32_t st0, cyl;
-
-	//! reset the controller	
-	flpy_disable_controller();
-	flpy_enable_controller();
-	flpy_wait_irq();
-
-	//! send CHECK_INT/SENSE INTERRUPT command to all drives
-	for (int i = 0; i<4; i++)
-		flpy_check_int(&st0, &cyl);
-
-	//! transfer speed 500kb/s
-	flpy_write_ccr(0);
-
-	//! pass mechanical drive info. steprate=3ms, unload time=240ms, load time=16ms
-	flpy_drive_data(3, 16, 240, true);
-
-	//! calibrate the disk
-	flpy_calibrate(_CurrentDrive);
-}
-
-void flpy_read_sector_imp(uint8_t head, uint8_t track, uint8_t sector) {
-	uint32_t st0, cyl;
-
-	//! set the DMA for read transfer
-	if (!dma_initialize_floppy((uint8_t*)DMA_BUFFER, 512))
-		kernel_panic(EXC_DMA_BADBUFF, (char*)"");
-
-	// set dma for read transfer
-	dma_set_read(FDC_DMA_CHANNEL);
-
-	//! read in a sector
-	flpy_send_command(FDC_CMD_READ_SECT | FDC_CMD_EXT_MULTITRACK | FDC_CMD_EXT_SKIP | FDC_CMD_EXT_DENSITY);
-	flpy_send_command(head << 2 | _CurrentDrive);
-	flpy_send_command(track);
-	flpy_send_command(head);
-	flpy_send_command(sector);
-	flpy_send_command(FLPY_SECTOR_DTL_512);
-	flpy_send_command(((sector + 1) >= FLPY_SECTORS_PER_TRACK) ? FLPY_SECTORS_PER_TRACK : sector + 1);
-	flpy_send_command(FLPY_GAP3_LENGTH_3_5);
-	flpy_send_command(0xff);
-
-	//! wait for irq
-	flpy_wait_irq();
-
-	//! read status info
-	for (int j = 0; j<7; j++)
-		flpy_read_data();
-
-	//! let FDC know we handled interrupt
-	flpy_check_int(&st0, &cyl);
-}
-
-//! seek to given track/cylinder
-int flpy_seek(uint32_t cyl, uint32_t head) {
-
-	uint32_t st0, cyl0;
-
-	if (_CurrentDrive >= 4)
-		return -1;
+	floppy_motor(base, floppy_motor_on);
 
 	for (int i = 0; i < 10; i++) {
+		// Attempt to position to given cylinder
+		// 1st byte bit[1:0] = drive, bit[2] = head
+		// 2nd byte is cylinder number
+		floppy_write_cmd(base, CMD_SEEK);
+		floppy_write_cmd(base, head << 2);
+		floppy_write_cmd(base, cyli);
 
-		//! send the command
-		flpy_send_command(FDC_CMD_SEEK);
-		flpy_send_command((head) << 2 | _CurrentDrive);
-		flpy_send_command(cyl);
+		irq_wait();
+		floppy_check_interrupt(base, &st0, &cyl);
 
-		//! wait for the results phase IRQ
-		flpy_wait_irq();
-		flpy_check_int(&st0, &cyl0);
+		if (st0 & 0xC0) continue;
 
-		//! found the cylinder?
-		if (cyl0 == cyl)
-			return 0;
+		if ((unsigned)cyl == cyli) {
+			floppy_motor(base, floppy_motor_off);
+			return;
+		}
 	}
 
-	return -1;
+	floppy_motor(base, floppy_motor_off);
+	kernel_panic(EXC_DRIVER, (char*)"floppy_seek: 10 retries exhausted\n");
 }
 
-/********** INTERFACE FUNCTIONS **********/
+void floppy_do_track(int base, unsigned cyl, floppy_dir dir) {
+	// transfer command, set below
+	unsigned char cmd = 0;
 
-void dr_floppy_dma_set_buffer_loc(uint32_t addr) {
-	DMA_BUFFER = addr;
-}
+	// Read is MT:MF:SK:0:0:1:1:0, write MT:MF:0:0:1:0:1
+	// where MT = multitrack, MF = MFM mode, SK = skip deleted
+	// Specify multitrack and MFM mode
+	static const int flags = 0xC0;
+	switch (dir) {
+		case floppy_dir_read: cmd = CMD_READ_DATA | flags; break;
+		case floppy_dir_write: cmd = CMD_WRITE_DATA | flags; break;
+		default: kernel_panic(EXC_DRIVER, (char*)"floppy_do_track: invalid direction");
+	}
 
-void dr_floppy_initialize(uint32_t dma_buffer_loc) {
-	dr_floppy_set_working_drive(0);
-	dr_floppy_dma_set_buffer_loc(dma_buffer_loc);
-	dr_floppy_install();
-}
+	// seek both heads
+	floppy_seek(base, cyl, 0);
+	floppy_seek(base, cyl, 1);
 
-void dr_floppy_install() {
-	install_interrupt_handler(PIC_IRQ_PARALLEL1, &dr_floppy_callback);
-	flpy_reset();
-	flpy_drive_data(13, 1, 0xF, true);
-}
+	floppy_motor(base, floppy_motor_on);
 
-void dr_floppy_set_working_drive(uint8_t drive) {
-	if (drive < 4 && drive>=0) _CurrentDrive = drive;
-}
+	// init dma..
+	floppy_dma_init(dir);
 
-uint8_t dr_floppy_get_working_drive() {
-	return _CurrentDrive;
-}
+	sleep(10); // give some time (100ms) to settle after the seeks
 
-void dr_floppy_lba_to_chs(int lba, int * head, int *track, int * sector) {
-	*head = (lba % (FLPY_SECTORS_PER_TRACK * 2)) / (FLPY_SECTORS_PER_TRACK);
-	*track = lba / (FLPY_SECTORS_PER_TRACK * 2);
-	*sector = lba % FLPY_SECTORS_PER_TRACK + 1;
-}
+	floppy_write_cmd(base, cmd);  // set above for current direction
+	floppy_write_cmd(base, 0);    // 0:0:0:0:0:HD:US1:US0 = head and drive
+	floppy_write_cmd(base, cyl);  // cylinder
+	floppy_write_cmd(base, 0);    // first head (should match with above)
+	floppy_write_cmd(base, 1);    // first sector, strangely counts from 1
+	floppy_write_cmd(base, 2);    // bytes/sector, 128*2^x (x=2 -> 512)
+	floppy_write_cmd(base, 18);   // number of tracks to operate on
+	floppy_write_cmd(base, 0x1b); // GAP3 length, 27 is default for 3.5"
+	floppy_write_cmd(base, 0xff); // data length (0xff if B/S != 0)
 
-uint8_t * dr_floppy_read_sector(int sectorLBA) {
-	if (_CurrentDrive >= 4) return 0;
+	irq_wait(); // don't SENSE_INTERRUPT here!
 
-	//! convert LBA sector to CHS
-	int head = 0, track = 0, sector = 1;
-	dr_floppy_lba_to_chs(sectorLBA, &head, &track, &sector);
+	unsigned char st0, st1, st2, bps; //, rcy, rhe, rse;
+	st0 = floppy_read_data(base);
+	st1 = floppy_read_data(base);
+	st2 = floppy_read_data(base);
+		
+	/*
+	* These are cylinder/head/sector values, updated with some
+	* rather bizarre logic, that I would like to understand.
+	*
+	*
+	rcy = floppy_read_data(base);
+	rhe = floppy_read_data(base);
+	rse = floppy_read_data(base);
+	*/
 
-	//! turn motor on and seek to track
-	flpy_control_motor(true);
+	// bytes per sector, should be what we programmed in
+	bps = floppy_read_data(base);
 	
-	if (flpy_seek(track, head) != 0) return 0;
-	
-	//! read sector and turn motor off
-	flpy_read_sector_imp(head, track, sector);
-	flpy_control_motor(false);
+	char status_msg[30];
+	int error = 0;
 
-	//! warning: this is a bit hackish
-	return (uint8_t*)DMA_BUFFER;
+	if (st0 & 0xC0)
+		strcat(status_msg, "floppy_do_sector: status = "), error = 1;
+	if (st1 & 0x80) 
+		strcat(status_msg, "floppy_do_sector: end of cylinder\n"), error = 1;
+	if (st0 & 0x08) 
+		strcat(status_msg, "floppy_do_sector: drive not ready\n"), error = 1;
+	if (st1 & 0x20) 
+		strcat(status_msg, "floppy_do_sector: CRC error\n"), error = 1;
+	if (st1 & 0x10) 
+		strcat(status_msg, "floppy_do_sector: controller timeout\n"), error = 1;
+	if (st1 & 0x04) 
+		strcat(status_msg, "floppy_do_sector: no data found\n"), error = 1;
+	if ((st1 | st2) & 0x01)
+		strcat(status_msg, "floppy_do_sector: no address mark found\n"), error = 1;
+	if (st2 & 0x40) 
+		strcat(status_msg, "floppy_do_sector: deleted address mark\n"), error = 1;
+	if (st2 & 0x20) 
+		strcat(status_msg, "floppy_do_sector: CRC error in data\n"), error = 1;
+	if (st2 & 0x10) 
+		strcat(status_msg, "floppy_do_sector: wrong cylinder\n"), error = 1;
+	if (st2 & 0x04)
+		strcat(status_msg, "floppy_do_sector: uPD765 sector not found\n"), error = 1;
+	if (st2 & 0x02) 
+		strcat(status_msg, "floppy_do_sector: bad cylinder\n"), error = 1;
+	//if (bps != 0x2) 
+	//	strcat(status_msg, "floppy_do_sector: wanted 512B/sector"), error = 1;
+	if (st1 & 0x02) 
+		strcat(status_msg, "floppy_do_sector: not writable\n"), error = 1;
+	
+	floppy_motor(base, floppy_motor_off);
+
+	if (!error) return;
+	else kernel_panic(EXC_DRIVER, status_msg);
+}
+
+void floppy_irq_callback(registers_t regs) {
+	is_floppy_irq = 1;
+}
+
+//============================================================================
+//    INTERFACE FUNCTIONS
+//============================================================================
+
+char* floppy_read_track(int base, unsigned cyl) {
+	floppy_reset(base);
+	floppy_do_track(base, cyl, floppy_dir_read);
+	return floppy_dmabuf;
+}
+
+void floppy_deep_read(char* buffer) {
+	for (unsigned i = 0; i < 1; i++) {
+		floppy_read_track(floppy_base, i);
+		memcpy(buffer + (i*FLOPPY_DMA_BUFFER_SIZE), floppy_dmabuf, FLOPPY_DMA_BUFFER_SIZE);
+	}
+}
+
+void floppy_write_track(int base, unsigned cyl) {
+	floppy_do_track(base, cyl, floppy_dir_write);
+}
+
+const char * dr_floppy_detect_drives() {
+	outb(0x70, 0x10);
+	return drive_types[inb(0x71) >> 4];
+}
+
+void dr_flpy_initialize(int dma_addr) {
+	flpydsk_set_working_drive(0);
+	flpydsk_install();
+	floppy_reset(floppy_base);
+}
+
+//! install floppy driver
+void flpydsk_install() {
+	install_interrupt_handler(PIC_IRQ_PARALLEL1, &floppy_irq_callback);	
+}
+
+//! set current working drive
+void flpydsk_set_working_drive(uint8_t drive) {
+	if (drive < 4 && drive>=0) current_drive = drive;
+}
+
+//! get current working drive
+uint8_t flpydsk_get_working_drive() {
+	return current_drive;
 }

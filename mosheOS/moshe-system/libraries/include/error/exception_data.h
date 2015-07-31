@@ -21,7 +21,8 @@ enum EXCEPTION_LIST {
 	EXC_ALIGNCHECK,
 	EXC_MACHCHECK,
 	EXC_RESEXC,
-	EXC_DMA_BADBUFF
+	EXC_DMA_BADBUFF,
+	EXC_DRIVER
 };
 
 const static char error_msgs[][33] = {
@@ -45,5 +46,6 @@ const static char error_msgs[][33] = {
 	{ "Alignment check (486+ only)" },
 	{ "Machine check (pen/586+ only)" },
 	{ "Reserved exception" }, 
-	{ "DMA Error - Bad buffer" }
+	{ "DMA Error - Bad buffer" },
+	{ "Driver Exception" }
 };
