@@ -26,6 +26,8 @@ void flpydsk_set_working_drive(uint8_t drive);
 //! get current working drive
 uint8_t flpydsk_get_working_drive();
 
-char* floppy_read_track(int base, unsigned cyl);
-
 void floppy_deep_read(char* buffer);
+void floppy_read_s(char* buffer, unsigned cyl);
+void floppy_read_st(char* buffer, unsigned cyl_start);
+void floppy_read_en(char* buffer, unsigned cyl_end);
+void floppy_read(char* buffer, unsigned cyl_start, unsigned cyl_end);

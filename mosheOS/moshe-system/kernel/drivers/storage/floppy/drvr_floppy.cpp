@@ -291,7 +291,7 @@ void floppy_do_track(int base, unsigned cyl, floppy_dir dir) {
 
 	irq_wait(); // don't SENSE_INTERRUPT here!
 
-	unsigned char st0, st1, st2, bps; //, rcy, rhe, rse;
+	unsigned char st0, st1, st2; //bps , rcy, rhe, rse;
 	st0 = floppy_read_data(base);
 	st1 = floppy_read_data(base);
 	st2 = floppy_read_data(base);
@@ -304,11 +304,12 @@ void floppy_do_track(int base, unsigned cyl, floppy_dir dir) {
 	rcy = floppy_read_data(base);
 	rhe = floppy_read_data(base);
 	rse = floppy_read_data(base);
-	*/
+	
 
 	// bytes per sector, should be what we programmed in
 	bps = floppy_read_data(base);
-	
+	*/
+
 	char status_msg[30];
 	int error = 0;
 
@@ -356,13 +357,28 @@ void floppy_irq_callback(registers_t regs) {
 //============================================================================
 
 char* floppy_read_track(int base, unsigned cyl) {
-	floppy_reset(base);
 	floppy_do_track(base, cyl, floppy_dir_read);
 	return floppy_dmabuf;
 }
 
+void floppy_read_s(char* buffer, unsigned cyl) {
+	floppy_read(buffer, cyl, cyl+1);
+}
+
+void floppy_read_st(char* buffer, unsigned cyl_start) {
+	floppy_read(buffer, cyl_start, FLOPPY_CYLINDER_COUNT);
+}
+
+void floppy_read_en(char* buffer, unsigned cyl_end) {
+	floppy_read(buffer, 0, cyl_end);
+}
+
 void floppy_deep_read(char* buffer) {
-	for (unsigned i = 0; i < 1; i++) {
+	floppy_read(buffer, 0, FLOPPY_CYLINDER_COUNT);
+}
+
+void floppy_read(char* buffer, unsigned cyl_start, unsigned cyl_end) {
+	for (unsigned i = cyl_start; i < cyl_end; i++) {
 		floppy_read_track(floppy_base, i);
 		memcpy(buffer + (i*FLOPPY_DMA_BUFFER_SIZE), floppy_dmabuf, FLOPPY_DMA_BUFFER_SIZE);
 	}
