@@ -147,6 +147,7 @@
     <ClCompile Include="moshe-system\libraries\lib\debug\terminal.cpp" />
     <ClCompile Include="moshe-system\libraries\lib\io\stdio.cpp" />
     <ClCompile Include="moshe-system\libraries\lib\string\string.cpp" />
+    <ClCompile Include="moshe-system\libraries\lib\type\ctype.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="moshe-system\kernel\drivers\driver_man.h" />
@@ -154,6 +155,7 @@
     <ClInclude Include="moshe-system\kernel\filesystem\fs.h" />
     <ClInclude Include="moshe-system\kernel\filesystem\initrd.h" />
     <ClInclude Include="moshe-system\kernel\system\system.h" />
+    <ClInclude Include="moshe-system\libraries\include\boot\bios_param_block.h" />
     <ClInclude Include="moshe-system\libraries\include\boot\multiboot.h" />
     <ClInclude Include="moshe-system\libraries\include\defs\video.h" />
     <ClInclude Include="moshe-system\libraries\include\debug\terminal.h" />

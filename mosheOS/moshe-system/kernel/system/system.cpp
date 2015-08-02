@@ -1,6 +1,9 @@
 #include "system.h"
 
 void system_initialize(multiboot_header_t* multiboot_ptr, uint32_t stack_ptr) {
+	d_clrscr_rst(true);
+	d_printf("Initializing Moshe OS . . .");
+
 	set_multiboot_header(multiboot_ptr);
 	heap_set_esp(stack_ptr);
 	
@@ -12,11 +15,13 @@ void system_initialize(multiboot_header_t* multiboot_ptr, uint32_t stack_ptr) {
 	initialize_paging();
 	
 	// Initialize ramdisk and file system!
+	
 	fs_root = initialize_initrd(initrd_loc);
 
-	// Load modules from the ram disk through the variable 'fs_root'
+	// Load modules, configurations and drivers from the ram disk through the variable 'fs_root'
 
-	// then, after everything is loaded and configured, set fs_root to the real file system on the floppy and/or hard disk
+	// then, after everything is loaded and configured, set fs_root to the real file system on the hard disk
+
 	initialize_drivers();
 }
 

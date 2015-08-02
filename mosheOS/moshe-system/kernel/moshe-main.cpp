@@ -5,13 +5,9 @@ void kmain(multiboot_header_t* MultibootStructure, uint32_t initial_stack) {
 	
 	welcome_terminal();
 	
-	d_printf("Floppy drive: %s", dr_floppy_detect_drives());
+	d_printf(" Floppy drive: %s\n", dr_floppy_detect_drives());
 
-	char * buff = (char*)kmalloc(FLOPPY_DMA_BUFFER_SIZE);
-	floppy_read_s(buff,0);
-
-	for (int i = 0; i < FLOPPY_DMA_BUFFER_SIZE; i++)
-		d_printf("%c ", buff[i]);
+	dump_ramdisk();
 
 	system_shutdown();
 }

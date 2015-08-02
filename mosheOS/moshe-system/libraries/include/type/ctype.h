@@ -1,6 +1,6 @@
 #pragma once
 
-extern char _ctype[];
+extern unsigned short _ctype[];
 
 /*DEPENDENCIES FOR THE MACROS*/
 #define CT_UP 0x01

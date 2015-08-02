@@ -27,6 +27,7 @@ int strcmp(char* str1, char* str2) {
 char *strcpy(char *s1, const char *s2) {
 	char *s1_old = s1;
 	while ((*(s1++) = *(s2++)));
+	*s1 = 0;
 	return s1_old;
 }
 

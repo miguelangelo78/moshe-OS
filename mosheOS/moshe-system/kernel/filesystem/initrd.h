@@ -14,6 +14,6 @@ typedef struct {
 } initrd_file_header_t;
 
 // This function is self explanatory:
-fs_node_t* initialize_initrd(uint32_t location);
+FILE* initialize_initrd(uint32_t location);
 
 extern void dump_ramdisk();

@@ -131,6 +131,9 @@
     <ClCompile Include="moshe-system\kernel\hal\dma.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="moshe-system\libraries\lib\type\ctype.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="moshe-system\libraries\include\string\string.h">
@@ -230,6 +233,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="moshe-system\libraries\include\hal\dma.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="moshe-system\libraries\include\boot\bios_param_block.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

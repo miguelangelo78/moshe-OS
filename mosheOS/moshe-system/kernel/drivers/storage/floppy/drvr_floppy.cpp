@@ -385,7 +385,31 @@ void floppy_read(char* buffer, unsigned cyl_start, unsigned cyl_end) {
 }
 
 void floppy_write_track(int base, unsigned cyl) {
+	floppy_reset(base);
 	floppy_do_track(base, cyl, floppy_dir_write);
+}
+
+void floppy_deep_write(char* buffer) {
+	floppy_write(buffer, 0, FLOPPY_CYLINDER_COUNT);
+}
+
+void floppy_write_s(char* buffer, unsigned cyl) {
+	floppy_write(buffer, cyl, cyl + 1);
+}
+
+void floppy_write_st(char* buffer, unsigned cyl_start) {
+	floppy_write(buffer, cyl_start, FLOPPY_CYLINDER_COUNT);
+}
+
+void floppy_write_en(char* buffer, unsigned cyl_end) {
+	floppy_write(buffer, 0, cyl_end);
+}
+
+void floppy_write(char* buffer, unsigned cyl_start, unsigned cyl_end) {
+	for (unsigned i = cyl_start; i < cyl_end; i++) {
+		memcpy(floppy_dmabuf, buffer + (i*FLOPPY_DMA_BUFFER_SIZE), FLOPPY_DMA_BUFFER_SIZE);
+		floppy_write_track(floppy_base, i);
+	}
 }
 
 const char * dr_floppy_detect_drives() {
